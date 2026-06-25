@@ -1,5 +1,6 @@
 import type { Offering } from "../domain/types";
 import { moodLabels } from "../domain/moods";
+import { getTimeUntilFadeLabel } from "../domain/expiration";
 
 interface OfferingPreviewProps {
   offering: Offering;
@@ -33,6 +34,7 @@ export default function OfferingPreview({ offering, onClick }: OfferingPreviewPr
       <div className="flex gap-3 mt-1 text-[10px] text-gray-500">
         <span>{offering.witnessCount > 0 ? "witnessed" : ""}</span>
         <span>{offering.candleCount > 0 ? "\u2726" : ""}</span>
+        <span>{getTimeUntilFadeLabel(offering, new Date())}</span>
       </div>
     </button>
   );

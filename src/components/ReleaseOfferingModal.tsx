@@ -51,6 +51,11 @@ export default function ReleaseOfferingModal({
           Offerings are public, anonymous, and temporary.
         </p>
 
+        <p className="text-[10px] text-gray-600 leading-relaxed">
+          Nocturne is not emergency support. If you or someone else is in immediate danger,
+          contact someone near you or local emergency services now.
+        </p>
+
         <div>
           <textarea
             value={body}

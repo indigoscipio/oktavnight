@@ -8,7 +8,7 @@ import {
   releaseOfferingLocally,
   reportOffering,
 } from "../domain/localViewerState";
-import { getVisibleOfferings } from "../domain/expiration";
+import { getVisibleOfferings, getTimeUntilFadeLabel } from "../domain/expiration";
 import {
   loadOfferings,
   saveOfferings,
@@ -59,7 +59,7 @@ export default function ChapelPage() {
   const visibleOfferings = getVisibleOfferings(offerings, localState, now);
 
   function handleCreateOffering(input: { body: string; mood: import("../domain/types").Mood }) {
-    const newOffering = createOffering(input);
+    const newOffering = createOffering({ ...input, existingOfferings: offerings });
     setOfferings((prev) => [...prev, newOffering]);
     setShowReleaseModal(false);
   }
@@ -126,14 +126,16 @@ export default function ChapelPage() {
           <Button variant="link" onClick={() => navigate("/about")}>
             About
           </Button>
-          <button
-            type="button"
-            onClick={handleResetLocalData}
-            className="text-[10px] text-gray-700 hover:text-gray-500 cursor-pointer"
-            title="Reset local data (dev only)"
-          >
-            reset
-          </button>
+          {import.meta.env.DEV && (
+            <button
+              type="button"
+              onClick={handleResetLocalData}
+              className="text-[10px] text-gray-700 hover:text-gray-500 cursor-pointer"
+              title="Reset local data (dev only)"
+            >
+              reset
+            </button>
+          )}
         </div>
       </header>
 

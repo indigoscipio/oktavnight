@@ -12,9 +12,13 @@ body,
 body {
   background-color: #0a0a0f;
   color: #d1d5db;
-  font-family: "Inter", "system-ui", sans-serif;
+  font-family: "Texturina", "Georgia", serif;
 }
 
-h1, h2, h3, .font-serif {
-  font-family: "Georgia", "Times New Roman", serif;
+.font-serif {
+  font-family: "Grenze Gotisch", "Georgia", serif;
+}
+
+.font-ui {
+  font-family: "Alegreya Sans SC", system-ui, sans-serif;
 }

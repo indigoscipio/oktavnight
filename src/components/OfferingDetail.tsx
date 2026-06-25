@@ -1,5 +1,6 @@
 import type { Offering, LocalOfferingState, InteractionResult } from "../domain/types";
 import { moodLabels } from "../domain/moods";
+import { getTimeUntilFadeLabel } from "../domain/expiration";
 import Button from "./Button";
 
 interface OfferingDetailProps {
@@ -32,6 +33,11 @@ export default function OfferingDetail({
         <span className="text-xs text-gray-500 uppercase tracking-wider">
           {moodLabels[offering.mood]}
         </span>
+        {getTimeUntilFadeLabel(offering, new Date()) && (
+          <span className="text-[10px] text-gray-600 italic">
+            {getTimeUntilFadeLabel(offering, new Date())}
+          </span>
+        )}
       </div>
 
       <h2 className="font-serif text-xl text-gray-200">

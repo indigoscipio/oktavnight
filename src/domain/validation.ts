@@ -16,9 +16,21 @@ export function validateOfferingBody(body: string): ValidationResult {
     return { valid: false, errors };
   }
 
-  const urlRegex = /https?:\/\/[^\s]+/gi;
+  const urlRegex = /https?:\/\/[^\s]+|www\.[^\s]+/gi;
   if (urlRegex.test(body)) {
-    errors.push("Offerings cannot contain links.");
+    errors.push("Offerings cannot contain links, emails, or phone numbers.");
+    return { valid: false, errors };
+  }
+
+  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+  if (emailRegex.test(body)) {
+    errors.push("Offerings cannot contain links, emails, or phone numbers.");
+    return { valid: false, errors };
+  }
+
+  const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/;
+  if (phoneRegex.test(body)) {
+    errors.push("Offerings cannot contain links, emails, or phone numbers.");
     return { valid: false, errors };
   }
 

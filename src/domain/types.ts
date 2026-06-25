@@ -1,6 +1,6 @@
 export type Mood = "grief" | "rage" | "fear" | "shame" | "loneliness";
 
-export type OfferingStatus = "active" | "released" | "reported" | "expired";
+export type OfferingStatus = "active" | "hidden" | "expired";
 
 export type Offering = {
   id: string;

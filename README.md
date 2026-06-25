@@ -1,32 +1,66 @@
-# React + TypeScript + Vite
+# Nocturne
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A quiet gothic ritual space for difficult thoughts.
 
-Currently, two official plugins are available:
+Nocturne is a small, anonymous, temporary space for people who need to set something down. No profiles. No replies. No names.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What v0 supports
 
-## React Compiler
+- Release an anonymous offering with a generated poetic name
+- Choose a mood: Grief, Rage, Fear, Shame, Loneliness
+- Witness an offering (once per browser)
+- Light a candle (once per browser)
+- Release an offering (hide from your own view only)
+- Report an offering (local count)
+- Offerings expire after 24 hours
+- Floating chapel layout on desktop, stacked on mobile
+- All data stored locally in your browser (localStorage)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## What it intentionally does not support
 
-## Expanding the Oxlint configuration
+- User accounts, profiles, or usernames
+- Comments, likes, replies, or DMs
+- Share pages or social features
+- AI image generation
+- Therapy chatbot
+- Real-time multiplayer
+- Complex moderation dashboard
+- Notifications
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Product principles
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+- No accounts, no profiles, no comments, no likes
+- Offerings are public, anonymous, and temporary
+- The app should feel like a quiet ritual, not a feed
+- This is not therapy, medical care, or emergency support
+
+## Run locally
+
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Run tests
+
+```bash
+npm test
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Stack
+
+- Vite
+- React
+- TypeScript
+- Tailwind CSS
+- Vitest
+
+## License
+
+MIT

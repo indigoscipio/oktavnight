@@ -5,6 +5,7 @@ import { generatePosition } from "./position";
 export function createOffering(input: {
   body: string;
   mood: Mood;
+  existingOfferings?: Offering[];
 }): Offering {
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -21,6 +22,6 @@ export function createOffering(input: {
     reportCount: 0,
     createdAt: now.toISOString(),
     expiresAt: expiresAt.toISOString(),
-    position: generatePosition(),
+    position: generatePosition(input.existingOfferings),
   };
 }

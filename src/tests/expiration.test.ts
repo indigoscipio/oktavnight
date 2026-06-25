@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isOfferingExpired, getVisibleOfferings } from "../domain/expiration";
+import { isOfferingExpired, getVisibleOfferings, getTimeUntilFadeLabel } from "../domain/expiration";
 import type { Offering, LocalOfferingState } from "../domain/types";
 
 function makeOffering(overrides: Partial<Offering> = {}): Offering {
@@ -73,5 +73,42 @@ describe("getVisibleOfferings", () => {
     );
     expect(visible).toHaveLength(1);
     expect(visible[0].id).toBe("active-1");
+  });
+});
+
+describe("getTimeUntilFadeLabel", () => {
+  it("returns fading now for expired offering", () => {
+    const offering = makeOffering({
+      expiresAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fading now");
+  });
+
+  it("returns fades soon for offering expiring within 1 hour", () => {
+    const offering = makeOffering({
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+    });
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fades soon");
+  });
+
+  it("returns fades tonight for offering expiring within 6 hours", () => {
+    const offering = makeOffering({
+      expiresAt: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
+    });
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fades tonight");
+  });
+
+  it("returns fades in Xh for offering expiring within 12 hours", () => {
+    const offering = makeOffering({
+      expiresAt: new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString(),
+    });
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fades in 10h");
+  });
+
+  it("returns empty string for offering with more than 12 hours left", () => {
+    const offering = makeOffering({
+      expiresAt: new Date(Date.now() + 20 * 60 * 60 * 1000).toISOString(),
+    });
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("");
   });
 });

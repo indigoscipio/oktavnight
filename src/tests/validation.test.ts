@@ -29,8 +29,23 @@ describe("validateOfferingBody", () => {
     expect(result.valid).toBe(true);
   });
 
-  it("rejects input containing links", () => {
+  it("rejects https links", () => {
     const result = validateOfferingBody("Check this out https://example.com");
+    expect(result.valid).toBe(false);
+  });
+
+  it("rejects www links", () => {
+    const result = validateOfferingBody("Visit www.example.com for more");
+    expect(result.valid).toBe(false);
+  });
+
+  it("rejects email addresses", () => {
+    const result = validateOfferingBody("Contact me at hello@example.com");
+    expect(result.valid).toBe(false);
+  });
+
+  it("rejects phone-number-like strings", () => {
+    const result = validateOfferingBody("Call me at 555-123-4567");
     expect(result.valid).toBe(false);
   });
 });
