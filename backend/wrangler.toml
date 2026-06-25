@@ -1,0 +1,11 @@
+name = "nocturne"
+main = "src/index.ts"
+compatibility_date = "2025-12-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "nocturne-db"
+database_id = "6972a181-d391-4e8e-b6b0-a764fe8109a3"
+
+[triggers]
+crons = ["0 0 * * *"]

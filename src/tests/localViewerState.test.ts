@@ -26,6 +26,7 @@ function makeOffering(id = "off-1"): Offering {
 
 function emptyState(): LocalOfferingState {
   return {
+    createdOfferingIds: [],
     witnessedOfferingIds: [],
     candleOfferingIds: [],
     releasedOfferingIds: [],

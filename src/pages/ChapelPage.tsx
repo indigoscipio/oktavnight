@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import type { Offering, LocalOfferingState } from "../domain/types";
+import type { Offering, LocalOfferingState, Mood } from "../domain/types";
 import { createOffering } from "../domain/offering";
 import {
   witnessOffering,
@@ -8,38 +8,41 @@ import {
   releaseOfferingLocally,
   reportOffering,
 } from "../domain/localViewerState";
-import { getVisibleOfferings, getTimeUntilFadeLabel } from "../domain/expiration";
-import {
-  loadOfferings,
-  saveOfferings,
-  loadViewerState,
-  saveViewerState,
-  clearAllLocalData,
-} from "../storage/localStorageRepository";
+import { getVisibleOfferings } from "../domain/expiration";
+import { fetchOfferings } from "../storage/offeringRepository";
+import { loadViewerState, saveViewerState, clearViewerState } from "../storage/viewerStateRepository";
+import { postOffering, postAction } from "../api/client";
 import OfferingPreview from "../components/OfferingPreview";
 import OfferingDetail from "../components/OfferingDetail";
 import ReleaseOfferingModal from "../components/ReleaseOfferingModal";
+import Modal from "../components/Modal";
 import Button from "../components/Button";
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(
+    () => window.matchMedia(query).matches
+  );
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [query]);
+  return matches;
+}
 
 export default function ChapelPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
   const [offerings, setOfferings] = useState<Offering[]>([]);
-  const [localState, setLocalState] = useState<LocalOfferingState>({
-    witnessedOfferingIds: [],
-    candleOfferingIds: [],
-    releasedOfferingIds: [],
-    reportedOfferingIds: [],
-  });
+  const [localState, setLocalState] = useState<LocalOfferingState>(() => loadViewerState());
   const [selectedOffering, setSelectedOffering] = useState<Offering | null>(null);
   const [showReleaseModal, setShowReleaseModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-
-  useEffect(() => {
-    setOfferings(loadOfferings());
-    setLocalState(loadViewerState());
-  }, []);
+  const [loading, setLoading] = useState(true);
+  const [, setTick] = useState(0);
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (searchParams.get("release") === "true") {
@@ -48,44 +51,111 @@ export default function ChapelPage() {
   }, [searchParams]);
 
   useEffect(() => {
-    saveOfferings(offerings);
-  }, [offerings]);
+    fetchOfferings()
+      .then((data) => {
+        setOfferings(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        showFeedback("Failed to load offerings.");
+        setLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
-    saveViewerState(localState);
+    try {
+      saveViewerState(localState);
+    } catch {
+      // silently fail for viewer state
+    }
   }, [localState]);
+
+  // Session timer: re-evaluate expiration every 60s
+  useEffect(() => {
+    const interval = setInterval(() => setTick((t) => t + 1), 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Cleanup feedback timer on unmount
+  useEffect(() => {
+    return () => {
+      if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
+    };
+  }, []);
 
   const now = new Date();
   const visibleOfferings = getVisibleOfferings(offerings, localState, now);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  function handleCreateOffering(input: { body: string; mood: import("../domain/types").Mood }) {
+  function showEmpty() {
+    return (
+      <div className={isDesktop ? "absolute inset-0 flex items-center justify-center" : "flex flex-col items-center mt-12"}>
+        <p className="text-gray-500 text-sm text-center mb-4">
+          The chapel is quiet tonight.
+          <br />
+          Release the first offering.
+        </p>
+        <Button variant="ghost" onClick={() => setShowReleaseModal(true)}>
+          Make an Offering
+        </Button>
+      </div>
+    );
+  }
+
+  function showFeedback(message: string) {
+    if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
+    setFeedback(message);
+    feedbackTimer.current = setTimeout(() => setFeedback(null), 3000);
+  }
+
+  async function handleCreateOffering(input: { body: string; mood: Mood }) {
     const newOffering = createOffering({ ...input, existingOfferings: offerings });
+    try {
+      await postOffering(newOffering);
+    } catch {
+      showFeedback("Failed to create offering. Try again.");
+      return;
+    }
     setOfferings((prev) => [...prev, newOffering]);
+    setLocalState((prev) => ({
+      ...prev,
+      createdOfferingIds: [...prev.createdOfferingIds, newOffering.id],
+    }));
     setShowReleaseModal(false);
   }
 
-  function handleWitness() {
+  async function handleWitness() {
     if (!selectedOffering) return;
     const result = witnessOffering(selectedOffering, localState);
-    setOfferings((prev) =>
-      prev.map((o) => (o.id === result.offering.id ? result.offering : o))
-    );
-    setLocalState(result.localState);
-    setSelectedOffering(result.offering);
-    setFeedback(result.result.message);
-    setTimeout(() => setFeedback(null), 3000);
+    if (result.result.success) {
+      try {
+        const updated = await postAction(selectedOffering.id, "witness");
+        setLocalState(result.localState);
+        setOfferings((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+        setSelectedOffering(updated);
+      } catch {
+        showFeedback("Failed to save. Try again.");
+        return;
+      }
+    }
+    showFeedback(result.result.message);
   }
 
-  function handleLightCandle() {
+  async function handleLightCandle() {
     if (!selectedOffering) return;
     const result = lightCandle(selectedOffering, localState);
-    setOfferings((prev) =>
-      prev.map((o) => (o.id === result.offering.id ? result.offering : o))
-    );
-    setLocalState(result.localState);
-    setSelectedOffering(result.offering);
-    setFeedback(result.result.message);
-    setTimeout(() => setFeedback(null), 3000);
+    if (result.result.success) {
+      try {
+        const updated = await postAction(selectedOffering.id, "candle");
+        setLocalState(result.localState);
+        setOfferings((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+        setSelectedOffering(updated);
+      } catch {
+        showFeedback("Failed to save. Try again.");
+        return;
+      }
+    }
+    showFeedback(result.result.message);
   }
 
   function handleRelease() {
@@ -95,22 +165,32 @@ export default function ChapelPage() {
     setSelectedOffering(null);
   }
 
-  function handleReport() {
+  async function handleReport() {
     if (!selectedOffering) return;
     const result = reportOffering(selectedOffering, localState);
-    setOfferings((prev) =>
-      prev.map((o) => (o.id === result.offering.id ? result.offering : o))
-    );
-    setLocalState(result.localState);
-    setSelectedOffering(result.offering);
-    setFeedback(result.result.message);
-    setTimeout(() => setFeedback(null), 3000);
+    if (result.result.success) {
+      try {
+        const updated = await postAction(selectedOffering.id, "report");
+        setLocalState(result.localState);
+        setOfferings((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+        setSelectedOffering(updated);
+      } catch {
+        showFeedback("Failed to save. Try again.");
+        return;
+      }
+    }
+    showFeedback(result.result.message);
   }
 
-  function handleResetLocalData() {
-    clearAllLocalData();
-    setOfferings(loadOfferings());
+  async function handleResetLocalData() {
+    clearViewerState();
     setLocalState(loadViewerState());
+    try {
+      const data = await fetchOfferings();
+      setOfferings(data);
+    } catch {
+      showFeedback("Failed to reload offerings.");
+    }
     setSelectedOffering(null);
     setShowReleaseModal(false);
   }
@@ -123,6 +203,9 @@ export default function ChapelPage() {
           Nocturne
         </span>
         <div className="flex items-center gap-3">
+          <Button variant="link" onClick={() => navigate("/")}>
+            Threshold
+          </Button>
           <Button variant="link" onClick={() => navigate("/about")}>
             About
           </Button>
@@ -144,63 +227,49 @@ export default function ChapelPage() {
         className="relative w-full"
         style={{ height: "calc(100vh - 53px)" }}
       >
-        {/* Mobile fallback */}
-        <div className="md:hidden flex flex-col gap-3 p-4 overflow-y-auto max-h-full">
-          {visibleOfferings.length === 0 ? (
-            <p className="text-gray-500 text-sm text-center mt-12">
-              The chapel is quiet tonight.
-              <br />
-              Release the first offering.
-            </p>
-          ) : (
-            visibleOfferings.map((o) => (
-              <OfferingPreview
-                key={o.id}
-                offering={o}
-                onClick={() => setSelectedOffering(o)}
-              />
-            ))
-          )}
-        </div>
-
-        {/* Desktop floating layout */}
-        <div className="hidden md:block relative w-full h-full">
-          {visibleOfferings.length === 0 ? (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-gray-500 text-sm text-center">
-                The chapel is quiet tonight.
-                <br />
-                Release the first offering.
-              </p>
-            </div>
-          ) : (
-            visibleOfferings.map((o) => (
-              <div
-                key={o.id}
-                className="absolute"
-                style={{ left: `${o.position.x}%`, top: `${o.position.y}%` }}
-              >
+        {loading ? null : isDesktop ? (
+          <div className="relative w-full h-full">
+            {visibleOfferings.length === 0 ? (
+              showEmpty()
+            ) : (
+              visibleOfferings.map((o) => (
+                <div
+                  key={o.id}
+                  className="absolute"
+                  style={{ left: `${o.position.x}%`, top: `${o.position.y}%` }}
+                >
+                  <OfferingPreview
+                    offering={o}
+                    onClick={() => setSelectedOffering(o)}
+                    isYours={localState.createdOfferingIds.includes(o.id)}
+                    isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
+                    isLit={localState.candleOfferingIds.includes(o.id)}
+                  />
+                </div>
+              ))
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-wrap justify-center gap-4 p-6 pt-8 overflow-y-auto max-h-full">
+            {visibleOfferings.length === 0 ? (
+              showEmpty()
+            ) : (
+              visibleOfferings.map((o) => (
                 <OfferingPreview
+                  key={o.id}
                   offering={o}
                   onClick={() => setSelectedOffering(o)}
+                  isYours={localState.createdOfferingIds.includes(o.id)}
+                  isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
+                  isLit={localState.candleOfferingIds.includes(o.id)}
                 />
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Release button */}
-        <div className="fixed bottom-6 right-6 z-20">
-          <Button
-            variant="primary"
-            onClick={() => setShowReleaseModal(true)}
-          >
-            Release an Offering
-          </Button>
-        </div>
+              ))
+            )}
+          </div>
+        )}
       </main>
 
-      {/* Temp feedback toast */}
+      {/* Feedback toast */}
       {feedback && (
         <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 bg-gray-800 border border-gray-700 px-4 py-2 rounded text-xs text-gray-300">
           {feedback}
@@ -208,21 +277,23 @@ export default function ChapelPage() {
       )}
 
       {/* Offering detail modal */}
-      {selectedOffering && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="w-full max-w-lg bg-gray-900 border border-gray-800 rounded-lg p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <OfferingDetail
-              offering={selectedOffering}
-              localState={localState}
-              onWitness={handleWitness}
-              onLightCandle={handleLightCandle}
-              onRelease={handleRelease}
-              onReport={handleReport}
-              onClose={() => setSelectedOffering(null)}
-            />
-          </div>
-        </div>
-      )}
+      <Modal
+        open={!!selectedOffering}
+        onClose={() => setSelectedOffering(null)}
+      >
+        {selectedOffering && (
+          <OfferingDetail
+            offering={selectedOffering}
+            localState={localState}
+            isYours={localState.createdOfferingIds.includes(selectedOffering.id)}
+            onWitness={handleWitness}
+            onLightCandle={handleLightCandle}
+            onRelease={handleRelease}
+            onReport={handleReport}
+            onClose={() => setSelectedOffering(null)}
+          />
+        )}
+      </Modal>
 
       {/* Release offering modal */}
       <ReleaseOfferingModal

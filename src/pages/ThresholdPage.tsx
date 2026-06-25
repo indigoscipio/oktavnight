@@ -25,10 +25,6 @@ export default function ThresholdPage() {
           <Button variant="primary" onClick={() => navigate("/chapel")}>
             Enter the Chapel
           </Button>
-
-          <Button variant="ghost" onClick={() => navigate("/chapel?release=true")}>
-            Release an Offering
-          </Button>
         </div>
 
         <p className="text-gray-600 text-xs mt-8 leading-relaxed">

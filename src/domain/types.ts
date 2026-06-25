@@ -21,6 +21,7 @@ export type Offering = {
 };
 
 export type LocalOfferingState = {
+  createdOfferingIds: string[];
   witnessedOfferingIds: string[];
   candleOfferingIds: string[];
   releasedOfferingIds: string[];

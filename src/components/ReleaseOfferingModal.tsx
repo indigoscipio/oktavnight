@@ -21,6 +21,7 @@ export default function ReleaseOfferingModal({
   const [body, setBody] = useState("");
   const [mood, setMood] = useState<Mood>("grief");
   const [errors, setErrors] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
 
   function handleSubmit() {
     const result = validateOfferingBody(body);
@@ -29,13 +30,16 @@ export default function ReleaseOfferingModal({
       return;
     }
     setErrors([]);
+    setSubmitting(true);
     onSubmit({ body: body.trim(), mood });
     setBody("");
     setMood("grief");
+    setSubmitting(false);
   }
 
   function handleClose() {
     setErrors([]);
+    setSubmitting(false);
     onClose();
   }
 
@@ -44,7 +48,7 @@ export default function ReleaseOfferingModal({
   return (
     <Modal open={open} onClose={handleClose}>
       <div className="flex flex-col gap-4">
-        <h2 className="font-serif text-lg text-gray-200">Release an Offering</h2>
+        <h2 className="font-serif text-lg text-gray-200">Make an Offering</h2>
 
         <p className="text-xs text-gray-500 leading-relaxed">
           Do not include names, handles, addresses, or identifying details.
@@ -104,7 +108,7 @@ export default function ReleaseOfferingModal({
           <Button variant="ghost" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSubmit}>
+          <Button variant="primary" onClick={handleSubmit} disabled={submitting}>
             Release
           </Button>
         </div>

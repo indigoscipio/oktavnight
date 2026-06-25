@@ -1,4 +1,4 @@
-import type { Offering, LocalOfferingState, InteractionResult } from "../domain/types";
+import type { Offering, LocalOfferingState } from "../domain/types";
 import { moodLabels } from "../domain/moods";
 import { getTimeUntilFadeLabel } from "../domain/expiration";
 import Button from "./Button";
@@ -6,16 +6,18 @@ import Button from "./Button";
 interface OfferingDetailProps {
   offering: Offering;
   localState: LocalOfferingState;
-  onWitness: () => InteractionResult;
-  onLightCandle: () => InteractionResult;
+  isYours: boolean;
+  onWitness: () => void;
+  onLightCandle: () => void;
   onRelease: () => void;
-  onReport: () => InteractionResult;
+  onReport: () => void;
   onClose: () => void;
 }
 
 export default function OfferingDetail({
   offering,
   localState,
+  isYours,
   onWitness,
   onLightCandle,
   onRelease,
@@ -37,6 +39,9 @@ export default function OfferingDetail({
           <span className="text-[10px] text-gray-600 italic">
             {getTimeUntilFadeLabel(offering, new Date())}
           </span>
+        )}
+        {isYours && (
+          <span className="text-[10px] text-gray-400 italic">yours</span>
         )}
       </div>
 

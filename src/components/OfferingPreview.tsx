@@ -1,41 +1,73 @@
 import type { Offering } from "../domain/types";
-import { moodLabels } from "../domain/moods";
-import { getTimeUntilFadeLabel } from "../domain/expiration";
 
 interface OfferingPreviewProps {
   offering: Offering;
   onClick: () => void;
+  isYours: boolean;
+  isWitnessed: boolean;
+  isLit: boolean;
 }
 
-const moodDot: Record<string, string> = {
-  grief: "bg-stone-500",
-  rage: "bg-red-500",
-  fear: "bg-violet-500",
-  shame: "bg-amber-500",
-  loneliness: "bg-blue-500",
+const moodBorder: Record<string, string> = {
+  grief: "border-stone-600/40 hover:border-stone-500/60",
+  rage: "border-red-600/40 hover:border-red-500/60",
+  fear: "border-violet-600/40 hover:border-violet-500/60",
+  shame: "border-amber-600/40 hover:border-amber-500/60",
+  loneliness: "border-blue-600/40 hover:border-blue-500/60",
 };
 
-export default function OfferingPreview({ offering, onClick }: OfferingPreviewProps) {
+const moodIcon: Record<string, string> = {
+  grief: "○",
+  rage: "◉",
+  fear: "◈",
+  shame: "◎",
+  loneliness: "○",
+};
+
+function hashId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return Math.abs(hash);
+}
+
+function getFloatStyle(id: string): React.CSSProperties {
+  const hash = hashId(id);
+  const duration = 5 + (hash % 5);
+  const delay = hash % 5;
+  return {
+    animation: `float ${duration}s ease-in-out ${delay}s infinite`,
+    willChange: "transform",
+  };
+}
+
+export default function OfferingPreview({
+  offering,
+  onClick,
+  isYours,
+  isWitnessed,
+  isLit,
+}: OfferingPreviewProps) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group flex flex-col gap-1 p-3 rounded-lg border border-gray-800 bg-gray-900/70 hover:bg-gray-800/80 hover:border-gray-600 transition-colors duration-150 cursor-pointer text-left w-44"
+      aria-label={offering.generatedName}
+      className={`fade-in float-animate group flex flex-col items-center justify-center gap-1 w-24 h-24 md:w-20 md:h-20 rounded-full border bg-gray-900/60 hover:bg-gray-800/70 hover:scale-105 transition-all duration-300 cursor-pointer text-center ${moodBorder[offering.mood]} ${isYours ? "ring-1 ring-gray-300/50" : ""}`}
+      style={getFloatStyle(offering.id)}
     >
-      <div className="flex items-center gap-2">
-        <span className={`w-2 h-2 rounded-full shrink-0 ${moodDot[offering.mood]}`} />
-        <span className="text-xs text-gray-400 uppercase tracking-wider">
-          {moodLabels[offering.mood]}
-        </span>
-      </div>
-      <span className="font-serif text-sm text-gray-200 group-hover:text-white transition-colors">
+      <span className="text-lg leading-none text-gray-500 group-hover:text-gray-400 transition-colors">
+        {moodIcon[offering.mood]}
+      </span>
+      <span className="font-serif text-[11px] text-gray-300 group-hover:text-white transition-colors line-clamp-1 px-1 leading-tight">
         {offering.generatedName}
       </span>
-      <div className="flex gap-3 mt-1 text-[10px] text-gray-500">
-        <span>{offering.witnessCount > 0 ? "witnessed" : ""}</span>
-        <span>{offering.candleCount > 0 ? "\u2726" : ""}</span>
-        <span>{getTimeUntilFadeLabel(offering, new Date())}</span>
-      </div>
+      {(isWitnessed || isLit) && (
+        <span className="text-[9px] text-gray-500 leading-none -mt-0.5">
+          {isLit && "✦"}{isWitnessed && " ·"}
+        </span>
+      )}
     </button>
   );
 }

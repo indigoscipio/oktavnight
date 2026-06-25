@@ -49,6 +49,7 @@ describe("getVisibleOfferings", () => {
   const releasedOffering = makeOffering({ id: "released-1" });
 
   const localState: LocalOfferingState = {
+    createdOfferingIds: [],
     witnessedOfferingIds: [],
     candleOfferingIds: [],
     releasedOfferingIds: ["released-1"],
