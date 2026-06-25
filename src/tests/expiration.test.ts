@@ -1,0 +1,77 @@
+import { describe, it, expect } from "vitest";
+import { isOfferingExpired, getVisibleOfferings } from "../domain/expiration";
+import type { Offering, LocalOfferingState } from "../domain/types";
+
+function makeOffering(overrides: Partial<Offering> = {}): Offering {
+  return {
+    id: "test-1",
+    body: "test",
+    mood: "grief",
+    generatedName: "Hollow Candle",
+    status: "active",
+    witnessCount: 0,
+    candleCount: 0,
+    releaseCount: 0,
+    reportCount: 0,
+    createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    position: { x: 50, y: 50 },
+    ...overrides,
+  };
+}
+
+describe("isOfferingExpired", () => {
+  it("returns false for an offering that expires in the future", () => {
+    const offering = makeOffering();
+    expect(isOfferingExpired(offering, new Date())).toBe(false);
+  });
+
+  it("returns true for an offering that expires in the past", () => {
+    const offering = makeOffering({
+      expiresAt: new Date(Date.now() - 1000).toISOString(),
+    });
+    expect(isOfferingExpired(offering, new Date())).toBe(true);
+  });
+
+  it("returns true for an offering expiring exactly now", () => {
+    const now = new Date();
+    const offering = makeOffering({ expiresAt: now.toISOString() });
+    expect(isOfferingExpired(offering, now)).toBe(true);
+  });
+});
+
+describe("getVisibleOfferings", () => {
+  const activeOffering = makeOffering({ id: "active-1" });
+  const expiredOffering = makeOffering({
+    id: "expired-1",
+    expiresAt: new Date(Date.now() - 1000).toISOString(),
+  });
+  const releasedOffering = makeOffering({ id: "released-1" });
+
+  const localState: LocalOfferingState = {
+    witnessedOfferingIds: [],
+    candleOfferingIds: [],
+    releasedOfferingIds: ["released-1"],
+    reportedOfferingIds: [],
+  };
+
+  it("filters out expired offerings", () => {
+    const visible = getVisibleOfferings(
+      [activeOffering, expiredOffering],
+      localState,
+      new Date()
+    );
+    expect(visible).toHaveLength(1);
+    expect(visible[0].id).toBe("active-1");
+  });
+
+  it("filters out locally released offerings", () => {
+    const visible = getVisibleOfferings(
+      [activeOffering, releasedOffering],
+      localState,
+      new Date()
+    );
+    expect(visible).toHaveLength(1);
+    expect(visible[0].id).toBe("active-1");
+  });
+});
