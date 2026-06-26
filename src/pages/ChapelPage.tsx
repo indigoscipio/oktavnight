@@ -42,6 +42,7 @@ export default function ChapelPage() {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
   const [ritualLoading, setRitualLoading] = useState<"witness" | "candle" | "report" | null>(null);
+  const [candleAnimatingIds, setCandleAnimatingIds] = useState<string[]>([]);
   const [, setTick] = useState(0);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -175,6 +176,10 @@ export default function ChapelPage() {
         setLocalState(result.localState);
         setOfferings((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
         setSelectedOffering(updated);
+        setCandleAnimatingIds((prev) => [...prev, selectedOffering.id]);
+        setTimeout(() => {
+          setCandleAnimatingIds((prev) => prev.filter((id) => id !== selectedOffering.id));
+        }, 1000);
       } catch {
         showFeedback("Failed to save. Try again.");
         return;
@@ -222,7 +227,7 @@ export default function ChapelPage() {
     <div className="page-in relative min-h-screen">
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-gray-900">
-        <span className="font-serif text-sm text-gray-500 tracking-wide">
+        <span className="font-serif text-base text-gray-500 tracking-widest">
           Nocturne
         </span>
         <div className="flex items-center gap-3">
@@ -278,6 +283,7 @@ export default function ChapelPage() {
                     isYours={localState.createdOfferingIds.includes(o.id)}
                     isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
                     isLit={localState.candleOfferingIds.includes(o.id)}
+                    candleAnimating={candleAnimatingIds.includes(o.id)}
                   />
                 </div>
               ))
@@ -296,6 +302,7 @@ export default function ChapelPage() {
                   isYours={localState.createdOfferingIds.includes(o.id)}
                   isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
                   isLit={localState.candleOfferingIds.includes(o.id)}
+                  candleAnimating={candleAnimatingIds.includes(o.id)}
                 />
               ))
             )}

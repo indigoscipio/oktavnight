@@ -6,6 +6,7 @@ interface OfferingPreviewProps {
   isYours: boolean;
   isWitnessed: boolean;
   isLit: boolean;
+  candleAnimating?: boolean;
 }
 
 const moodBorder: Record<string, string> = {
@@ -48,13 +49,14 @@ export default function OfferingPreview({
   isYours,
   isWitnessed,
   isLit,
+  candleAnimating,
 }: OfferingPreviewProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={offering.generatedName}
-      className={`fade-in float-animate group flex flex-col items-center justify-center gap-1 w-24 h-24 md:w-20 md:h-20 rounded-full border bg-gray-900/60 hover:bg-gray-800/70 hover:scale-105 transition-all duration-300 cursor-pointer text-center ${moodBorder[offering.mood]} ${isYours ? "ring-1 ring-gray-300/50" : ""}`}
+      className={`fade-in float-animate group flex flex-col items-center justify-center gap-1 w-24 h-24 md:w-20 md:h-20 rounded-full border bg-gray-900/60 hover:bg-gray-800/70 hover:scale-105 transition-all duration-300 cursor-pointer text-center ${moodBorder[offering.mood]} ${isYours ? "ring-1 ring-gray-300/50" : ""} ${candleAnimating ? "shadow-[0_0_15px_rgba(251,191,36,0.5)]" : ""}`}
       style={getFloatStyle(offering.id)}
     >
       <span className="text-lg leading-none text-gray-500 group-hover:text-gray-400 transition-colors">
