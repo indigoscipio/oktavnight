@@ -76,6 +76,14 @@ export default function ChapelPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-refresh offerings every 15s
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchOfferings().then(setOfferings).catch(() => {});
+    }, 15_000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Cleanup feedback timer on unmount
   useEffect(() => {
     return () => {
@@ -227,7 +235,11 @@ export default function ChapelPage() {
         className="relative w-full"
         style={{ height: "calc(100vh - 53px)" }}
       >
-        {loading ? null : isDesktop ? (
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : isDesktop ? (
           <div className="relative w-full h-full">
             {visibleOfferings.length === 0 ? (
               showEmpty()
@@ -242,8 +254,6 @@ export default function ChapelPage() {
                     offering={o}
                     onClick={() => setSelectedOffering(o)}
                     isYours={localState.createdOfferingIds.includes(o.id)}
-                    isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
-                    isLit={localState.candleOfferingIds.includes(o.id)}
                   />
                 </div>
               ))
@@ -260,8 +270,6 @@ export default function ChapelPage() {
                   offering={o}
                   onClick={() => setSelectedOffering(o)}
                   isYours={localState.createdOfferingIds.includes(o.id)}
-                  isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
-                  isLit={localState.candleOfferingIds.includes(o.id)}
                 />
               ))
             )}
