@@ -5,7 +5,7 @@ export default function AboutPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4">
+    <div className="page-in flex flex-col items-center justify-center min-h-screen px-4">
       <div className="max-w-md flex flex-col gap-5">
         <h1 className="font-serif text-2xl text-gray-200">On Nocturne</h1>
 

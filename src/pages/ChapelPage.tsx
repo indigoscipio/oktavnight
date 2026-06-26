@@ -227,7 +227,7 @@ export default function ChapelPage() {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="page-in relative min-h-screen">
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-gray-900">
         <span className="font-serif text-sm text-gray-500 tracking-wide">

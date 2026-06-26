@@ -63,6 +63,9 @@ export default function OfferingPreview({
       <span className="font-serif text-[11px] text-gray-300 group-hover:text-white transition-colors line-clamp-1 px-1 leading-tight">
         {offering.generatedName}
       </span>
+      <span className="text-[10px] text-gray-600 leading-none line-clamp-1 px-1">
+        {offering.body}
+      </span>
       {(offering.candleCount > 0 || offering.witnessCount > 0 || isWitnessed || isLit) && (
         <span className="text-[9px] text-gray-500 leading-none -mt-0.5">
           {offering.candleCount > 0 && `✦${offering.candleCount} `}

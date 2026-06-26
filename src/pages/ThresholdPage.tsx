@@ -5,7 +5,7 @@ export default function ThresholdPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+    <div className="page-in flex flex-col items-center justify-center min-h-screen px-4 text-center">
       <div className="max-w-md flex flex-col gap-6">
         <h1 className="font-serif text-3xl text-gray-200 tracking-wide">
           Nocturne
