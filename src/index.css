@@ -46,6 +46,20 @@ body {
   animation: pageIn 0.3s ease-out both;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1f2937;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #374151;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .float-animate {
     animation: none !important;
