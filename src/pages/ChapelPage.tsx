@@ -333,7 +333,7 @@ export default function ChapelPage() {
 
       {/* Feedback toast */}
       {feedback && (
-        <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 bg-gray-800 border border-gray-700 px-4 py-2 rounded text-xs text-gray-300">
+        <div className="toast fixed bottom-20 left-1/2 -translate-x-1/2 z-30 bg-gray-800 border border-gray-700 px-4 py-2 rounded text-xs text-gray-300">
           {feedback}
         </div>
       )}

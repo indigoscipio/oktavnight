@@ -23,7 +23,7 @@ export default function AboutPage() {
             Thou may release a burden, bear witness to another's, light a candle in the dark, or let it pass from thy sight. That is all.
           </p>
 
-          <hr className="border-gray-800 my-2" />
+          <hr className="ornate my-3" />
 
           <p className="text-gray-500 text-xs">
             Nocturne is no cure. It is a small, nameless place for those who carry what cannot be set down elsewhere.
@@ -33,7 +33,7 @@ export default function AboutPage() {
             If thou or another art in peril, seek those nearby, or the aid of those sworn to protect.
           </p>
 
-          <hr className="border-gray-800 my-2" />
+          <hr className="ornate my-3" />
 
           <p className="text-gray-500 text-xs">
             Plead not names, nor addresses, nor any mark by which thou might be known.

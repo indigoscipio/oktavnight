@@ -28,6 +28,11 @@ export default function OfferingDetail({
   const hasLitCandle = localState.candleOfferingIds.includes(offering.id);
   const hasReported = localState.reportedOfferingIds.includes(offering.id);
   const fadeLabel = getTimeUntilFadeLabel(offering, new Date());
+  const fadeColor =
+    fadeLabel === "fading to ash" ? "text-red-500" :
+    fadeLabel === "fading soon" ? "text-amber-500" :
+    fadeLabel && (fadeLabel.startsWith("fading by") || fadeLabel.startsWith("fading in")) ? "text-amber-600/70" :
+    "text-gray-600";
 
   return (
     <div className="flex flex-col gap-5">
@@ -36,7 +41,7 @@ export default function OfferingDetail({
           {moodLabels[offering.mood]}
         </span>
         {fadeLabel && (
-          <span className="text-[10px] text-gray-600 italic">
+          <span className={`text-[10px] italic ${fadeColor}`}>
             {fadeLabel}
           </span>
         )}
@@ -62,7 +67,7 @@ export default function OfferingDetail({
         )}
       </div>
 
-      <hr className="border-gray-800" />
+      <hr className="ornate" />
 
       <div className="flex flex-wrap gap-2">
         <Button
