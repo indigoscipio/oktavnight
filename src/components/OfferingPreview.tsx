@@ -9,11 +9,11 @@ interface OfferingPreviewProps {
 }
 
 const moodBorder: Record<string, string> = {
-  grief: "border-stone-600/40 hover:border-stone-500/60",
-  rage: "border-red-600/40 hover:border-red-500/60",
-  fear: "border-violet-600/40 hover:border-violet-500/60",
-  shame: "border-amber-600/40 hover:border-amber-500/60",
-  loneliness: "border-blue-600/40 hover:border-blue-500/60",
+  grief: "border-stone-600/40 hover:border-stone-500/60 hover:shadow-[0_0_12px_rgba(120,113,108,0.2)]",
+  rage: "border-red-600/40 hover:border-red-500/60 hover:shadow-[0_0_12px_rgba(220,38,38,0.2)]",
+  fear: "border-violet-600/40 hover:border-violet-500/60 hover:shadow-[0_0_12px_rgba(124,58,237,0.2)]",
+  shame: "border-amber-600/40 hover:border-amber-500/60 hover:shadow-[0_0_12px_rgba(217,119,6,0.2)]",
+  loneliness: "border-blue-600/40 hover:border-blue-500/60 hover:shadow-[0_0_12px_rgba(37,99,235,0.2)]",
 };
 
 const moodIcon: Record<string, string> = {

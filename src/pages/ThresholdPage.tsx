@@ -7,6 +7,9 @@ export default function ThresholdPage() {
   return (
     <div className="page-in flex flex-col items-center justify-center min-h-screen px-4 text-center">
       <div className="max-w-md flex flex-col gap-6">
+        <svg className="mx-auto mb-2 text-gray-500" width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M28 4C14.7 4 4 14.7 4 28s10.7 24 24 24c-5.3-4-8-10.7-8-18s2.7-14 8-18z" />
+        </svg>
         <h1 className="font-serif text-3xl text-gray-200 tracking-wide">
           Nocturne
         </h1>

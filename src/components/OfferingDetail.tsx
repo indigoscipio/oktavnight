@@ -27,6 +27,7 @@ export default function OfferingDetail({
   const hasWitnessed = localState.witnessedOfferingIds.includes(offering.id);
   const hasLitCandle = localState.candleOfferingIds.includes(offering.id);
   const hasReported = localState.reportedOfferingIds.includes(offering.id);
+  const fadeLabel = getTimeUntilFadeLabel(offering, new Date());
 
   return (
     <div className="flex flex-col gap-5">
@@ -34,9 +35,9 @@ export default function OfferingDetail({
         <span className="text-xs text-gray-500 uppercase tracking-wider">
           {moodLabels[offering.mood]}
         </span>
-        {getTimeUntilFadeLabel(offering, new Date()) && (
+        {fadeLabel && (
           <span className="text-[10px] text-gray-600 italic">
-            {getTimeUntilFadeLabel(offering, new Date())}
+            {fadeLabel}
           </span>
         )}
         {isYours && (
