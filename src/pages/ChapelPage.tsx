@@ -310,11 +310,25 @@ export default function ChapelPage() {
           </div>
         )}
 
+        {!loading && !fetchError && visibleOfferings.length > 0 && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 text-[10px] text-gray-600">
+            {visibleOfferings.length === 1
+              ? "A single offering flickers in the dark."
+              : `${visibleOfferings.length} offerings flicker in the dark.`}
+          </div>
+        )}
+
         {/* Release button */}
         <div className="fixed bottom-6 right-6 z-20">
           <Button variant="primary" onClick={() => setShowReleaseModal(true)}>
             Make an Offering
           </Button>
+        </div>
+
+        {/* Legend */}
+        <div className="fixed bottom-6 left-6 z-20 text-[10px] text-gray-600 flex gap-3">
+          <span>✦ candle lit</span>
+          <span>· witness borne</span>
         </div>
       </main>
 
