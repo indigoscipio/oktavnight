@@ -91,6 +91,7 @@ export default function Modal({ open, onClose, children }: ModalProps) {
           type="button"
           aria-label="Close"
           onClick={onClose}
+          tabIndex={-1}
           className="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-xl leading-none cursor-pointer p-1"
         >
           &times;

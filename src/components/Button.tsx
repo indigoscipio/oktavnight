@@ -28,7 +28,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`inline-flex items-center justify-center transition-colors duration-150 ${
+      className={`inline-flex items-center justify-center transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none ${
         fullWidth ? "w-full" : ""
       } ${variantClasses[variant]} ${className}`}
       {...props}
