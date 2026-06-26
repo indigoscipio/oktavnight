@@ -267,6 +267,13 @@ export default function ChapelPage() {
             )}
           </div>
         )}
+
+        {/* Release button */}
+        <div className="fixed bottom-6 right-6 z-20">
+          <Button variant="primary" onClick={() => setShowReleaseModal(true)}>
+            Make an Offering
+          </Button>
+        </div>
       </main>
 
       {/* Feedback toast */}
