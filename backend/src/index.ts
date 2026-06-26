@@ -2,6 +2,16 @@ export interface Env {
   DB: D1Database;
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+function json(data: unknown, status = 200): Response {
+  return Response.json(data, { status, headers: corsHeaders });
+}
+
 const actionColumns: Record<string, string> = {
   witness: "witness_count",
   candle: "candle_count",
@@ -27,17 +37,19 @@ function rowToOffering(row: any) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url);
-    const { pathname, method } = url;
+    if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-    if (method === "GET" && pathname === "/api/offerings") {
+    const url = new URL(request.url);
+    const { pathname } = url;
+
+    if (request.method === "GET" && pathname === "/api/offerings") {
       const { results } = await env.DB.prepare(
         "SELECT * FROM offerings WHERE expires_at > datetime('now') AND status = 'active' ORDER BY created_at DESC"
       ).all();
-      return Response.json(results.map(rowToOffering));
+      return json(results.map(rowToOffering));
     }
 
-    if (method === "POST" && pathname === "/api/offerings") {
+    if (request.method === "POST" && pathname === "/api/offerings") {
       const o = await request.json();
       await env.DB.prepare(
         "INSERT INTO offerings (id, body, mood, generated_name, status, witness_count, candle_count, release_count, report_count, created_at, expires_at, position_x, position_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -47,21 +59,21 @@ export default {
         o.releaseCount, o.reportCount, o.createdAt,
         o.expiresAt, o.position.x, o.position.y,
       ).run();
-      return Response.json(o, { status: 201 });
+      return json(o, 201);
     }
 
     const actionMatch = pathname.match(/^\/api\/offerings\/([^/]+)\/(witness|candle|report)$/);
-    if (method === "POST" && actionMatch) {
+    if (request.method === "POST" && actionMatch) {
       const [, id, action] = actionMatch;
       await env.DB.prepare(
         `UPDATE offerings SET ${actionColumns[action]} = ${actionColumns[action]} + 1 WHERE id = ?`
       ).bind(id).run();
       const { results } = await env.DB.prepare("SELECT * FROM offerings WHERE id = ?").bind(id).all();
-      if (results.length === 0) return new Response("Not found", { status: 404 });
-      return Response.json(rowToOffering(results[0]));
+      if (results.length === 0) return new Response("Not found", { status: 404, headers: corsHeaders });
+      return json(rowToOffering(results[0]));
     }
 
-    return new Response("Not found", { status: 404 });
+    return new Response("Not found", { status: 404, headers: corsHeaders });
   },
 
   async scheduled(_controller: ScheduledController, env: Env): Promise<void> {

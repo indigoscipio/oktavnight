@@ -1,6 +1,6 @@
 import type { Offering } from "../domain/types";
 
-const BASE = "/api";
+const BASE = import.meta.env.VITE_API_BASE || "/api";
 
 export async function getOfferings(): Promise<Offering[]> {
   const res = await fetch(`${BASE}/offerings`);
