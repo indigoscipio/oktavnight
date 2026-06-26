@@ -41,6 +41,7 @@ export default function ChapelPage() {
   const [showReleaseModal, setShowReleaseModal] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [, setTick] = useState(0);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -57,7 +58,7 @@ export default function ChapelPage() {
         setLoading(false);
       })
       .catch(() => {
-        showFeedback("Failed to load offerings.");
+        setFetchError(true);
         setLoading(false);
       });
   }, []);
@@ -114,6 +115,18 @@ export default function ChapelPage() {
     if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
     setFeedback(message);
     feedbackTimer.current = setTimeout(() => setFeedback(null), 3000);
+  }
+
+  async function handleRetry() {
+    setLoading(true);
+    setFetchError(false);
+    try {
+      const data = await fetchOfferings();
+      setOfferings(data);
+    } catch {
+      setFetchError(true);
+    }
+    setLoading(false);
   }
 
   async function handleCreateOffering(input: { body: string; mood: Mood }) {
@@ -239,6 +252,13 @@ export default function ChapelPage() {
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-6 h-6 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : fetchError ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <p className="text-gray-500 text-sm text-center">Couldn't load offerings.</p>
+              <Button variant="ghost" onClick={handleRetry}>Retry</Button>
+            </div>
+          </div>
         ) : isDesktop ? (
           <div className="relative w-full h-full">
             {visibleOfferings.length === 0 ? (
@@ -254,6 +274,8 @@ export default function ChapelPage() {
                     offering={o}
                     onClick={() => setSelectedOffering(o)}
                     isYours={localState.createdOfferingIds.includes(o.id)}
+                    isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
+                    isLit={localState.candleOfferingIds.includes(o.id)}
                   />
                 </div>
               ))
@@ -270,6 +292,8 @@ export default function ChapelPage() {
                   offering={o}
                   onClick={() => setSelectedOffering(o)}
                   isYours={localState.createdOfferingIds.includes(o.id)}
+                  isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
+                  isLit={localState.candleOfferingIds.includes(o.id)}
                 />
               ))
             )}

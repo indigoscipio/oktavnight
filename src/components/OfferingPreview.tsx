@@ -4,6 +4,8 @@ interface OfferingPreviewProps {
   offering: Offering;
   onClick: () => void;
   isYours: boolean;
+  isWitnessed: boolean;
+  isLit: boolean;
 }
 
 const moodBorder: Record<string, string> = {
@@ -44,6 +46,8 @@ export default function OfferingPreview({
   offering,
   onClick,
   isYours,
+  isWitnessed,
+  isLit,
 }: OfferingPreviewProps) {
   return (
     <button
@@ -59,11 +63,12 @@ export default function OfferingPreview({
       <span className="font-serif text-[11px] text-gray-300 group-hover:text-white transition-colors line-clamp-1 px-1 leading-tight">
         {offering.generatedName}
       </span>
-      {(offering.candleCount > 0 || offering.witnessCount > 0) && (
+      {(offering.candleCount > 0 || offering.witnessCount > 0 || isWitnessed || isLit) && (
         <span className="text-[9px] text-gray-500 leading-none -mt-0.5">
-          {offering.candleCount > 0 && `✦${offering.candleCount}`}
-          {offering.candleCount > 0 && offering.witnessCount > 0 && " "}
-          {offering.witnessCount > 0 && `·${offering.witnessCount}`}
+          {offering.candleCount > 0 && `✦${offering.candleCount} `}
+          {offering.witnessCount > 0 && `·${offering.witnessCount} `}
+          {isLit && "✦"}
+          {isWitnessed && "·"}
         </span>
       )}
     </button>
