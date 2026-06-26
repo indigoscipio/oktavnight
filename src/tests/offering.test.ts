@@ -15,7 +15,6 @@ describe("createOffering", () => {
     expect(offering.status).toBe("active");
     expect(offering.witnessCount).toBe(0);
     expect(offering.candleCount).toBe(0);
-    expect(offering.releaseCount).toBe(0);
     expect(offering.reportCount).toBe(0);
     expect(offering.createdAt).toBeTruthy();
     expect(offering.expiresAt).toBeTruthy();

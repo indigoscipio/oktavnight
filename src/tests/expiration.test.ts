@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { isOfferingExpired, getVisibleOfferings, getTimeUntilFadeLabel } from "../domain/expiration";
-import type { Offering, LocalOfferingState } from "../domain/types";
+import type { Offering } from "../domain/types";
 
 function makeOffering(overrides: Partial<Offering> = {}): Offering {
   return {
@@ -11,7 +11,6 @@ function makeOffering(overrides: Partial<Offering> = {}): Offering {
     status: "active",
     witnessCount: 0,
     candleCount: 0,
-    releaseCount: 0,
     reportCount: 0,
     createdAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -46,30 +45,10 @@ describe("getVisibleOfferings", () => {
     id: "expired-1",
     expiresAt: new Date(Date.now() - 1000).toISOString(),
   });
-  const releasedOffering = makeOffering({ id: "released-1" });
-
-  const localState: LocalOfferingState = {
-    createdOfferingIds: [],
-    witnessedOfferingIds: [],
-    candleOfferingIds: [],
-    releasedOfferingIds: ["released-1"],
-    reportedOfferingIds: [],
-  };
 
   it("filters out expired offerings", () => {
     const visible = getVisibleOfferings(
       [activeOffering, expiredOffering],
-      localState,
-      new Date()
-    );
-    expect(visible).toHaveLength(1);
-    expect(visible[0].id).toBe("active-1");
-  });
-
-  it("filters out locally released offerings", () => {
-    const visible = getVisibleOfferings(
-      [activeOffering, releasedOffering],
-      localState,
       new Date()
     );
     expect(visible).toHaveLength(1);

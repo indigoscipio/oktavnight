@@ -44,19 +44,6 @@ export function lightCandle(
   };
 }
 
-export function releaseOfferingLocally(
-  offeringId: string,
-  localState: LocalOfferingState
-): LocalOfferingState {
-  if (localState.releasedOfferingIds.includes(offeringId)) {
-    return localState;
-  }
-  return {
-    ...localState,
-    releasedOfferingIds: [...localState.releasedOfferingIds, offeringId],
-  };
-}
-
 export function reportOffering(
   offering: Offering,
   localState: LocalOfferingState

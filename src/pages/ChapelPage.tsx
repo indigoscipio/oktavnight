@@ -5,7 +5,6 @@ import { createOffering } from "../domain/offering";
 import {
   witnessOffering,
   lightCandle,
-  releaseOfferingLocally,
   reportOffering,
 } from "../domain/localViewerState";
 import { getVisibleOfferings } from "../domain/expiration";
@@ -94,7 +93,7 @@ export default function ChapelPage() {
   }, []);
 
   const now = new Date();
-  const visibleOfferings = getVisibleOfferings(offerings, localState, now);
+  const visibleOfferings = getVisibleOfferings(offerings, now);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   function showEmpty() {
@@ -184,13 +183,6 @@ export default function ChapelPage() {
       }
     }
     showFeedback(result.result.message);
-  }
-
-  function handleRelease() {
-    if (!selectedOffering) return;
-    const newLocalState = releaseOfferingLocally(selectedOffering.id, localState);
-    setLocalState(newLocalState);
-    setSelectedOffering(null);
   }
 
   async function handleReport() {
@@ -352,7 +344,6 @@ export default function ChapelPage() {
             ritualLoading={ritualLoading}
             onWitness={handleWitness}
             onLightCandle={handleLightCandle}
-            onRelease={handleRelease}
             onReport={handleReport}
             onClose={() => setSelectedOffering(null)}
           />

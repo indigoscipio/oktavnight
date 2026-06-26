@@ -10,7 +10,6 @@ export type Offering = {
   status: OfferingStatus;
   witnessCount: number;
   candleCount: number;
-  releaseCount: number;
   reportCount: number;
   createdAt: string;
   expiresAt: string;
@@ -24,7 +23,6 @@ export type LocalOfferingState = {
   createdOfferingIds: string[];
   witnessedOfferingIds: string[];
   candleOfferingIds: string[];
-  releasedOfferingIds: string[];
   reportedOfferingIds: string[];
 };
 

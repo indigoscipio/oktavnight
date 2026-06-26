@@ -18,7 +18,6 @@ export function createOffering(input: {
     status: "active",
     witnessCount: 0,
     candleCount: 0,
-    releaseCount: 0,
     reportCount: 0,
     createdAt: now.toISOString(),
     expiresAt: expiresAt.toISOString(),

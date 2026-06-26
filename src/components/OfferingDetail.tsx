@@ -10,7 +10,6 @@ interface OfferingDetailProps {
   ritualLoading: "witness" | "candle" | "report" | null;
   onWitness: () => void;
   onLightCandle: () => void;
-  onRelease: () => void;
   onReport: () => void;
   onClose: () => void;
 }
@@ -22,13 +21,11 @@ export default function OfferingDetail({
   ritualLoading,
   onWitness,
   onLightCandle,
-  onRelease,
   onReport,
   onClose,
 }: OfferingDetailProps) {
   const hasWitnessed = localState.witnessedOfferingIds.includes(offering.id);
   const hasLitCandle = localState.candleOfferingIds.includes(offering.id);
-  const hasReleased = localState.releasedOfferingIds.includes(offering.id);
   const hasReported = localState.reportedOfferingIds.includes(offering.id);
 
   return (
@@ -81,14 +78,6 @@ export default function OfferingDetail({
           disabled={hasLitCandle || ritualLoading === "candle"}
         >
           {ritualLoading === "candle" ? "Lighting..." : hasLitCandle ? "Candle Lit" : "Light Candle"}
-        </Button>
-
-        <Button
-          variant="ghost"
-          onClick={onRelease}
-          disabled={hasReleased}
-        >
-          {hasReleased ? "Released" : "Release"}
         </Button>
 
         <Button

@@ -21,7 +21,7 @@ const moodIcon: Record<string, string> = {
   rage: "◉",
   fear: "◈",
   shame: "◎",
-  loneliness: "○",
+  loneliness: "◇",
 };
 
 function hashId(id: string): number {

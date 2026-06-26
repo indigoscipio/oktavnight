@@ -7,7 +7,6 @@ export function loadViewerState(): LocalOfferingState {
     createdOfferingIds: [],
     witnessedOfferingIds: [],
     candleOfferingIds: [],
-    releasedOfferingIds: [],
     reportedOfferingIds: [],
   };
 

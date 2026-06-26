@@ -30,7 +30,6 @@ function rowToOffering(row: any) {
     status: row.status,
     witnessCount: row.witness_count,
     candleCount: row.candle_count,
-    releaseCount: row.release_count,
     reportCount: row.report_count,
     createdAt: row.created_at,
     expiresAt: row.expires_at,
@@ -43,7 +42,7 @@ function validateOffering(o: any): string | null {
   if (typeof o.id !== "string" || !o.id) return "id required";
   if (typeof o.body !== "string" || o.body.length < 1 || o.body.length > 500) return "body must be 1-500 characters";
   if (!VALID_MOODS.includes(o.mood)) return "invalid mood";
-  if (typeof o.generatedName !== "string" || !o.generatedName) return "generatedName required";
+  if (typeof o.generatedName !== "string" || !o.generatedName || o.generatedName.length > 100) return "generatedName required";
   if (!VALID_STATUSES.includes(o.status)) return "invalid status";
   if (typeof o.createdAt !== "string" || !o.createdAt) return "createdAt required";
   if (typeof o.expiresAt !== "string" || !o.expiresAt) return "expiresAt required";
@@ -95,11 +94,11 @@ export default {
       if (validationError) return json({ error: validationError }, 400);
 
       await env.DB.prepare(
-        "INSERT INTO offerings (id, body, mood, generated_name, status, witness_count, candle_count, release_count, report_count, created_at, expires_at, position_x, position_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        "INSERT INTO offerings (id, body, mood, generated_name, status, witness_count, candle_count, report_count, created_at, expires_at, position_x, position_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
       ).bind(
         o.id, o.body, o.mood, o.generatedName,
         o.status, o.witnessCount, o.candleCount,
-        o.releaseCount, o.reportCount, o.createdAt,
+        o.reportCount, o.createdAt,
         o.expiresAt, o.position.x, o.position.y,
       ).run();
       return json(o, 201);
@@ -111,11 +110,17 @@ export default {
       if (!checkRateLimit(ip)) return json({ error: "rate limit exceeded" }, 429);
 
       const [, id, action] = actionMatch;
-      const { results } = await env.DB.prepare("SELECT * FROM offerings WHERE id = ?").bind(id).all();
+      const { results } = await env.DB.prepare("SELECT * FROM offerings WHERE id = ? AND status = 'active' AND expires_at > datetime('now')").bind(id).all();
       if (results.length === 0) return json({ error: "not found" }, 404);
-      await env.DB.prepare(
-        `UPDATE offerings SET ${actionColumns[action]} = ${actionColumns[action]} + 1 WHERE id = ?`
-      ).bind(id).run();
+      if (action === "candle") {
+        await env.DB.prepare(
+          "UPDATE offerings SET candle_count = candle_count + 1, expires_at = MIN(datetime(expires_at, '+24 hours'), datetime(created_at, '+7 days')) WHERE id = ?"
+        ).bind(id).run();
+      } else {
+        await env.DB.prepare(
+          `UPDATE offerings SET ${actionColumns[action]} = ${actionColumns[action]} + 1 WHERE id = ?`
+        ).bind(id).run();
+      }
       const { results: updated } = await env.DB.prepare("SELECT * FROM offerings WHERE id = ?").bind(id).all();
       return json(rowToOffering(updated[0]));
     }

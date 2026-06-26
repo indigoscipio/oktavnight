@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   witnessOffering,
   lightCandle,
-  releaseOfferingLocally,
   reportOffering,
 } from "../domain/localViewerState";
 import type { Offering, LocalOfferingState } from "../domain/types";
@@ -16,7 +15,6 @@ function makeOffering(id = "off-1"): Offering {
     status: "active",
     witnessCount: 0,
     candleCount: 0,
-    releaseCount: 0,
     reportCount: 0,
     createdAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
@@ -29,7 +27,6 @@ function emptyState(): LocalOfferingState {
     createdOfferingIds: [],
     witnessedOfferingIds: [],
     candleOfferingIds: [],
-    releasedOfferingIds: [],
     reportedOfferingIds: [],
   };
 }
@@ -81,23 +78,6 @@ describe("lightCandle", () => {
 
     expect(result.result.success).toBe(false);
     expect(result.offering.candleCount).toBe(0);
-  });
-});
-
-describe("releaseOfferingLocally", () => {
-  it("adds the offering id to released list", () => {
-    const state = emptyState();
-    const result = releaseOfferingLocally("off-1", state);
-    expect(result.releasedOfferingIds).toContain("off-1");
-  });
-
-  it("is idempotent", () => {
-    const state: LocalOfferingState = {
-      ...emptyState(),
-      releasedOfferingIds: ["off-1"],
-    };
-    const result = releaseOfferingLocally("off-1", state);
-    expect(result.releasedOfferingIds).toEqual(["off-1"]);
   });
 });
 
