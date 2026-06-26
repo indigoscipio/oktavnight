@@ -82,28 +82,28 @@ describe("getTimeUntilFadeLabel", () => {
     const offering = makeOffering({
       expiresAt: new Date(Date.now() - 1000).toISOString(),
     });
-    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fading now");
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fading to ash");
   });
 
   it("returns fades soon for offering expiring within 1 hour", () => {
     const offering = makeOffering({
       expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
     });
-    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fades soon");
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fading soon");
   });
 
   it("returns fades tonight for offering expiring within 6 hours", () => {
     const offering = makeOffering({
       expiresAt: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(),
     });
-    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fades tonight");
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fading by nightfall");
   });
 
   it("returns fades in Xh for offering expiring within 12 hours", () => {
     const offering = makeOffering({
       expiresAt: new Date(Date.now() + 10 * 60 * 60 * 1000).toISOString(),
     });
-    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fades in 10h");
+    expect(getTimeUntilFadeLabel(offering, new Date())).toBe("fading in 10h");
   });
 
   it("returns empty string for offering with more than 12 hours left", () => {

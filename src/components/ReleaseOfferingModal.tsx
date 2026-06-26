@@ -48,23 +48,22 @@ export default function ReleaseOfferingModal({
   return (
     <Modal open={open} onClose={handleClose}>
       <div className="flex flex-col gap-4">
-        <h2 className="font-serif text-lg text-gray-200">Make an Offering</h2>
+        <h2 className="font-serif text-lg text-gray-200">Release Thy Burden</h2>
 
         <p className="text-xs text-gray-500 leading-relaxed">
-          Do not include names, handles, addresses, or identifying details.
-          Offerings are public, anonymous, and temporary.
+          Let no name nor mark by which thou might be known pass into these words.
+          Offerings are shown to all who enter — but none shall know thee.
         </p>
 
         <p className="text-[10px] text-gray-600 leading-relaxed">
-          Nocturne is not emergency support. If you or someone else is in immediate danger,
-          contact someone near you or local emergency services now.
+          Nocturne is no refuge from harm. If thou or another art in peril, seek the aid of those nearby.
         </p>
 
         <div>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="What would you like to release?"
+            placeholder="What wouldst thou release?"
             rows={4}
             maxLength={280}
             className="w-full bg-gray-950 border border-gray-800 rounded p-3 text-sm text-gray-200 placeholder-gray-600 resize-none focus:outline-none focus:border-gray-600"
@@ -106,7 +105,7 @@ export default function ReleaseOfferingModal({
 
         <div className="flex gap-2 justify-end">
           <Button variant="ghost" onClick={handleClose}>
-            Cancel
+            Stay thy hand
           </Button>
           <Button variant="primary" onClick={handleSubmit} disabled={submitting}>
             Release

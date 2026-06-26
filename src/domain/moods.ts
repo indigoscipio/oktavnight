@@ -2,8 +2,8 @@ import type { Mood } from "./types";
 
 export const moodLabels: Record<Mood, string> = {
   grief: "Grief",
-  rage: "Rage",
-  fear: "Fear",
+  rage: "Wrath",
+  fear: "Dread",
   shame: "Shame",
   loneliness: "Loneliness",
 };

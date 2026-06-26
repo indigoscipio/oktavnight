@@ -18,10 +18,10 @@ export function getVisibleOfferings(
 
 export function getTimeUntilFadeLabel(offering: Offering, now: Date): string {
   const msLeft = new Date(offering.expiresAt).getTime() - now.getTime();
-  if (msLeft <= 0) return "fading now";
+  if (msLeft <= 0) return "fading to ash";
   const hoursLeft = msLeft / (1000 * 60 * 60);
-  if (hoursLeft < 1) return "fades soon";
-  if (hoursLeft < 6) return "fades tonight";
-  if (hoursLeft < 12) return `fades in ${Math.ceil(hoursLeft)}h`;
+  if (hoursLeft < 1) return "fading soon";
+  if (hoursLeft < 6) return "fading by nightfall";
+  if (hoursLeft < 12) return `fading in ${Math.ceil(hoursLeft)}h`;
   return "";
 }

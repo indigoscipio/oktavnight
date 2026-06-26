@@ -12,11 +12,11 @@ export default function ThresholdPage() {
         </h1>
 
         <p className="text-gray-400 text-sm leading-relaxed">
-          Nocturne is a quiet place to release what you cannot say out loud.
+          A still place for what thou canst not speak aloud.
         </p>
 
         <p className="text-gray-500 text-xs leading-relaxed">
-          No profiles. No replies. No names.
+          No names. No replies. No knowing who.
           <br />
           Write it. Witness it. Let it fade.
         </p>
@@ -28,9 +28,9 @@ export default function ThresholdPage() {
         </div>
 
         <p className="text-gray-600 text-xs mt-8 leading-relaxed">
-          Nocturne is not therapy, medical care, or emergency support.
+          Nocturne is no physic, no remedy for what ails thee.
           <br />
-          If you or someone else is in immediate danger, contact local emergency services.
+          If thou or another art in peril, seek the aid of those nearby.
         </p>
 
         <Button variant="link" onClick={() => navigate("/about")}>

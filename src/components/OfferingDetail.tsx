@@ -43,7 +43,7 @@ export default function OfferingDetail({
           </span>
         )}
         {isYours && (
-          <span className="text-[10px] text-gray-400 italic">yours</span>
+          <span className="text-[10px] text-gray-400 italic">thine</span>
         )}
       </div>
 
@@ -57,10 +57,10 @@ export default function OfferingDetail({
 
       <div className="flex flex-wrap gap-2 text-xs text-gray-500">
         {offering.witnessCount > 0 && (
-          <span className="text-gray-400">This offering has been witnessed.</span>
+          <span className="text-gray-400">Another soul hath borne witness.</span>
         )}
         {offering.candleCount > 0 && (
-          <span className="text-gray-400">A candle was lit here.</span>
+          <span className="text-gray-400">A flame flickers in the dark.</span>
         )}
       </div>
 

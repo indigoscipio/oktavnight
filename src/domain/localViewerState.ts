@@ -8,7 +8,7 @@ export function witnessOffering(
     return {
       offering,
       localState,
-      result: { success: false, message: "You have already witnessed this offering." },
+      result: { success: false, message: "Thou hast already borne witness here." },
     };
   }
 
@@ -18,7 +18,7 @@ export function witnessOffering(
       ...localState,
       witnessedOfferingIds: [...localState.witnessedOfferingIds, offering.id],
     },
-    result: { success: true, message: "This offering has been witnessed." },
+    result: { success: true, message: "Another soul hath borne witness." },
   };
 }
 
@@ -30,7 +30,7 @@ export function lightCandle(
     return {
       offering,
       localState,
-      result: { success: false, message: "A candle has already been lit here." },
+      result: { success: false, message: "A flame already burns here." },
     };
   }
 
@@ -40,7 +40,7 @@ export function lightCandle(
       ...localState,
       candleOfferingIds: [...localState.candleOfferingIds, offering.id],
     },
-    result: { success: true, message: "A candle was lit here." },
+    result: { success: true, message: "A flame flickers in the dark." },
   };
 }
 
@@ -65,7 +65,7 @@ export function reportOffering(
     return {
       offering,
       localState,
-      result: { success: false, message: "You have already reported this offering." },
+      result: { success: false, message: "Thou hast already spoken." },
     };
   }
 
@@ -75,6 +75,6 @@ export function reportOffering(
       ...localState,
       reportedOfferingIds: [...localState.reportedOfferingIds, offering.id],
     },
-    result: { success: true, message: "This offering has been reported." },
+    result: { success: true, message: "The matter hath been noted." },
   };
 }

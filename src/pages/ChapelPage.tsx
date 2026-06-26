@@ -100,11 +100,11 @@ export default function ChapelPage() {
   function showEmpty() {
     return (
       <div className={isDesktop ? "absolute inset-0 flex items-center justify-center" : "flex flex-col items-center mt-12"}>
-        <p className="text-gray-500 text-sm text-center mb-4">
-          The chapel is quiet tonight.
-          <br />
-          Release the first offering.
-        </p>
+          <p className="text-gray-500 text-sm text-center mb-4">
+            The chapel lies still this night.
+            <br />
+            No burden hath been laid here yet.
+          </p>
         <Button variant="ghost" onClick={() => setShowReleaseModal(true)}>
           Make an Offering
         </Button>
@@ -265,7 +265,7 @@ export default function ChapelPage() {
         ) : fetchError ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
-              <p className="text-gray-500 text-sm text-center">Couldn't load offerings.</p>
+              <p className="text-gray-500 text-sm text-center">The offerings elude us.</p>
               <Button variant="ghost" onClick={handleRetry}>Retry</Button>
             </div>
           </div>

@@ -41,7 +41,7 @@ describe("witnessOffering", () => {
     const result = witnessOffering(offering, state);
 
     expect(result.result.success).toBe(true);
-    expect(result.result.message).toBe("This offering has been witnessed.");
+    expect(result.result.message).toBe("Another soul hath borne witness.");
     expect(result.offering.witnessCount).toBe(1);
     expect(result.localState.witnessedOfferingIds).toContain("off-1");
   });
@@ -66,7 +66,7 @@ describe("lightCandle", () => {
     const result = lightCandle(offering, state);
 
     expect(result.result.success).toBe(true);
-    expect(result.result.message).toBe("A candle was lit here.");
+    expect(result.result.message).toBe("A flame flickers in the dark.");
     expect(result.offering.candleCount).toBe(1);
     expect(result.localState.candleOfferingIds).toContain("off-1");
   });
