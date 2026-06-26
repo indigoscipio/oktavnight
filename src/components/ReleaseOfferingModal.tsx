@@ -8,7 +8,7 @@ import Button from "./Button";
 interface ReleaseOfferingModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (input: { body: string; mood: Mood }) => void;
+  onSubmit: (input: { body: string; mood: Mood }) => Promise<void>;
 }
 
 const moods: Mood[] = ["grief", "rage", "fear", "shame", "loneliness"];
@@ -23,7 +23,7 @@ export default function ReleaseOfferingModal({
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const result = validateOfferingBody(body);
     if (!result.valid) {
       setErrors(result.errors);
@@ -31,7 +31,7 @@ export default function ReleaseOfferingModal({
     }
     setErrors([]);
     setSubmitting(true);
-    onSubmit({ body: body.trim(), mood });
+    await onSubmit({ body: body.trim(), mood });
     setBody("");
     setMood("grief");
     setSubmitting(false);

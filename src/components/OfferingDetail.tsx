@@ -7,6 +7,7 @@ interface OfferingDetailProps {
   offering: Offering;
   localState: LocalOfferingState;
   isYours: boolean;
+  ritualLoading: "witness" | "candle" | "report" | null;
   onWitness: () => void;
   onLightCandle: () => void;
   onRelease: () => void;
@@ -18,6 +19,7 @@ export default function OfferingDetail({
   offering,
   localState,
   isYours,
+  ritualLoading,
   onWitness,
   onLightCandle,
   onRelease,
@@ -68,17 +70,17 @@ export default function OfferingDetail({
         <Button
           variant="ghost"
           onClick={onWitness}
-          disabled={hasWitnessed}
+          disabled={hasWitnessed || ritualLoading === "witness"}
         >
-          {hasWitnessed ? "Witnessed" : "Witness"}
+          {ritualLoading === "witness" ? "Witnessing..." : hasWitnessed ? "Witnessed" : "Witness"}
         </Button>
 
         <Button
           variant="ghost"
           onClick={onLightCandle}
-          disabled={hasLitCandle}
+          disabled={hasLitCandle || ritualLoading === "candle"}
         >
-          {hasLitCandle ? "Candle Lit" : "Light Candle"}
+          {ritualLoading === "candle" ? "Lighting..." : hasLitCandle ? "Candle Lit" : "Light Candle"}
         </Button>
 
         <Button
@@ -92,9 +94,9 @@ export default function OfferingDetail({
         <Button
           variant="danger"
           onClick={onReport}
-          disabled={hasReported}
+          disabled={hasReported || ritualLoading === "report"}
         >
-          {hasReported ? "Reported" : "Report"}
+          {ritualLoading === "report" ? "Reporting..." : hasReported ? "Reported" : "Report"}
         </Button>
       </div>
 

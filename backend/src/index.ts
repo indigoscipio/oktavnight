@@ -88,7 +88,9 @@ export default {
       const ip = getClientIP(request);
       if (!checkRateLimit(ip)) return json({ error: "rate limit exceeded" }, 429);
 
-      const o = await request.json();
+      let o: any;
+      try { o = await request.json(); }
+      catch { return json({ error: "invalid JSON body" }, 400); }
       const validationError = validateOffering(o);
       if (validationError) return json({ error: validationError }, 400);
 

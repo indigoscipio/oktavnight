@@ -42,6 +42,7 @@ export default function ChapelPage() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
+  const [ritualLoading, setRitualLoading] = useState<"witness" | "candle" | "report" | null>(null);
   const [, setTick] = useState(0);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -149,6 +150,7 @@ export default function ChapelPage() {
     if (!selectedOffering) return;
     const result = witnessOffering(selectedOffering, localState);
     if (result.result.success) {
+      setRitualLoading("witness");
       try {
         const updated = await postAction(selectedOffering.id, "witness");
         setLocalState(result.localState);
@@ -157,6 +159,8 @@ export default function ChapelPage() {
       } catch {
         showFeedback("Failed to save. Try again.");
         return;
+      } finally {
+        setRitualLoading(null);
       }
     }
     showFeedback(result.result.message);
@@ -166,6 +170,7 @@ export default function ChapelPage() {
     if (!selectedOffering) return;
     const result = lightCandle(selectedOffering, localState);
     if (result.result.success) {
+      setRitualLoading("candle");
       try {
         const updated = await postAction(selectedOffering.id, "candle");
         setLocalState(result.localState);
@@ -174,6 +179,8 @@ export default function ChapelPage() {
       } catch {
         showFeedback("Failed to save. Try again.");
         return;
+      } finally {
+        setRitualLoading(null);
       }
     }
     showFeedback(result.result.message);
@@ -190,6 +197,7 @@ export default function ChapelPage() {
     if (!selectedOffering) return;
     const result = reportOffering(selectedOffering, localState);
     if (result.result.success) {
+      setRitualLoading("report");
       try {
         const updated = await postAction(selectedOffering.id, "report");
         setLocalState(result.localState);
@@ -198,6 +206,8 @@ export default function ChapelPage() {
       } catch {
         showFeedback("Failed to save. Try again.");
         return;
+      } finally {
+        setRitualLoading(null);
       }
     }
     showFeedback(result.result.message);
@@ -325,6 +335,7 @@ export default function ChapelPage() {
             offering={selectedOffering}
             localState={localState}
             isYours={localState.createdOfferingIds.includes(selectedOffering.id)}
+            ritualLoading={ritualLoading}
             onWitness={handleWitness}
             onLightCandle={handleLightCandle}
             onRelease={handleRelease}
