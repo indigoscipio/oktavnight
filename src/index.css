@@ -19,8 +19,9 @@ body {
   font-family: "Grenze Gotisch", "Georgia", serif;
 }
 
-.font-ui {
-  font-family: "Alegreya Sans SC", system-ui, sans-serif;
+::selection {
+  background: #374151;
+  color: #e5e7eb;
 }
 
 @keyframes float {
@@ -55,6 +56,11 @@ body {
   animation: toastIn 0.2s ease-out both;
 }
 
+.float-animate {
+  animation: float var(--float-duration, 5s) ease-in-out var(--float-delay, 0s) infinite;
+  will-change: transform;
+}
+
 .ornate {
   border: 0;
   height: 1px;
@@ -75,11 +81,22 @@ body {
   background: #374151;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1f2937 transparent;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .float-animate {
     animation: none !important;
   }
   .fade-in {
+    animation: none !important;
+  }
+  .page-in {
+    animation: none !important;
+  }
+  .toast {
     animation: none !important;
   }
 }

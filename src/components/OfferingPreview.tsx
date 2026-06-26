@@ -38,9 +38,9 @@ function getFloatStyle(id: string): React.CSSProperties {
   const duration = 5 + (hash % 5);
   const delay = hash % 5;
   return {
-    animation: `float ${duration}s ease-in-out ${delay}s infinite`,
-    willChange: "transform",
-  };
+    "--float-duration": `${duration}s`,
+    "--float-delay": `${delay}s`,
+  } as React.CSSProperties;
 }
 
 export default function OfferingPreview({
