@@ -104,7 +104,7 @@ export default function ChapelPage() {
 
   const now = new Date();
   const visibleOfferings = getVisibleOfferings(offerings, now);
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   function showEmpty() {
     return (
@@ -283,7 +283,7 @@ export default function ChapelPage() {
             </div>
           </div>
         ) : isDesktop ? (
-          <div className="relative z-10 w-full h-full">
+          <div className="absolute inset-0 z-10">
             {visibleOfferings.length === 0 ? (
               showEmpty()
             ) : (
@@ -307,9 +307,9 @@ export default function ChapelPage() {
             )}
           </div>
         ) : (
-          <div className="relative z-10 flex h-full flex-col items-center gap-5 overflow-y-auto p-5 pt-12 pb-28">
+          <div className="relative z-10 grid h-full grid-cols-2 justify-items-center gap-3 overflow-y-auto p-4 pt-12 pb-28 sm:gap-4 sm:p-5 sm:pt-12">
             {visibleOfferings.length === 0 ? (
-              showEmpty()
+              <div className="col-span-2">{showEmpty()}</div>
             ) : (
               visibleOfferings.map((o) => (
                 <OfferingPreview
@@ -318,6 +318,7 @@ export default function ChapelPage() {
                   onClick={() => setSelectedOffering(o)}
                   isYours={localState.createdOfferingIds.includes(o.id)}
                   candleAnimating={candleAnimatingIds.includes(o.id)}
+                  compact
                 />
               ))
             )}

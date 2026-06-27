@@ -9,6 +9,7 @@ interface OfferingPreviewProps {
   onClick: () => void;
   isYours: boolean;
   candleAnimating?: boolean;
+  compact?: boolean;
 }
 
 const moodAccent: Record<Mood, string> = {
@@ -42,15 +43,51 @@ export default function OfferingPreview({
   onClick,
   isYours,
   candleAnimating,
+  compact,
 }: OfferingPreviewProps) {
   const imagePath = getOfferingImagePath(offering.id);
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={`${offering.generatedName}, ${moodLabels[offering.mood]} offering, ${offering.witnessCount} witnessed, ${offering.candleCount} candles lit`}
+        className={`fade-in group relative flex w-32 flex-col items-center gap-2 overflow-hidden rounded-2xl border border-amber-900/25 bg-gradient-to-br from-gray-950/85 via-black/65 to-black/45 p-2.5 text-center shadow-xl shadow-black/45 backdrop-blur-[2px] transition-all duration-300 hover:bg-black/65 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 sm:w-36 sm:p-3 ${isYours ? "ring-1 ring-amber-200/35" : ""} ${candleAnimating ? "shadow-[0_0_24px_rgba(251,191,36,0.32)]" : ""}`}
+      >
+        <span className="pointer-events-none absolute inset-1 rounded-xl border border-white/[0.04]" />
+        <span className="relative h-20 w-20 sm:h-24 sm:w-24" aria-hidden="true">
+          <span className="absolute inset-x-3 bottom-1 h-3 rounded-full bg-black/70 blur-md" />
+          <img
+            src={imagePath}
+            alt=""
+            className="relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.85)]"
+            loading="lazy"
+          />
+        </span>
+        <span className="font-serif text-sm leading-tight text-gray-100 line-clamp-1">
+          {offering.generatedName}
+        </span>
+        <span className="flex items-center justify-center gap-2 text-[10px] text-gray-300/85">
+          <span className="inline-flex items-center gap-1" title="Witnessed count">
+            <Icon src={ritualIconPaths.witnessed} className="h-3.5 w-3.5 text-gray-200/80" />
+            {offering.witnessCount}
+          </span>
+          <span className="inline-flex items-center gap-1" title="Candles lit">
+            <Icon src={ritualIconPaths.lit} className="h-3.5 w-3.5 text-amber-200/80" />
+            {offering.candleCount}
+          </span>
+        </span>
+      </button>
+    );
+  }
 
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={`${offering.generatedName}, ${moodLabels[offering.mood]} offering, ${offering.witnessCount} witnessed, ${offering.candleCount} candles lit`}
-      className={`fade-in float-animate group relative flex w-[22rem] max-w-[88vw] flex-col items-start gap-3 overflow-hidden rounded-2xl border border-amber-900/25 bg-gradient-to-br from-gray-950/85 via-black/62 to-black/42 p-3 text-left shadow-xl shadow-black/45 backdrop-blur-[2px] transition-all duration-300 hover:bg-black/65 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 lg:w-80 lg:flex-row lg:items-center lg:p-2.5 lg:pr-3.5 cursor-pointer ${moodAccent[offering.mood]} ${isYours ? "ring-1 ring-amber-200/35" : ""} ${candleAnimating ? "shadow-[0_0_24px_rgba(251,191,36,0.32)]" : ""}`}
+      className={`fade-in float-animate group relative flex w-80 max-w-[88vw] items-center gap-3 overflow-hidden rounded-2xl border border-amber-900/25 bg-gradient-to-br from-gray-950/85 via-black/62 to-black/42 p-2.5 pr-3.5 text-left shadow-xl shadow-black/45 backdrop-blur-[2px] transition-all duration-300 hover:bg-black/65 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 cursor-pointer ${moodAccent[offering.mood]} ${isYours ? "ring-1 ring-amber-200/35" : ""} ${candleAnimating ? "shadow-[0_0_24px_rgba(251,191,36,0.32)]" : ""}`}
       style={getFloatStyle(offering.id)}
     >
       <span className="pointer-events-none absolute inset-1 rounded-xl border border-white/[0.04]" />
