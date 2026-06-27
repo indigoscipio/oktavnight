@@ -13,7 +13,7 @@ export default function ThresholdPage() {
 
   return (
     <div
-      className="page-in relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-cover bg-center px-4 py-10 text-center"
+      className="page-in relative flex min-h-dvh flex-col items-center justify-center overflow-y-auto bg-cover bg-center px-4 py-10 text-center"
       style={{
         backgroundImage:
           "linear-gradient(rgba(3,3,6,0.3), rgba(3,3,6,0.72)), url('/threshold-bg.webp')",

@@ -15,7 +15,7 @@ export default function AboutPage() {
 
   return (
     <div
-      className="page-in relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-cover bg-center px-4 py-10"
+      className="page-in relative flex min-h-dvh flex-col items-center justify-center overflow-y-auto bg-cover bg-center px-4 py-10"
       style={{
         backgroundImage:
           "linear-gradient(rgba(3,3,6,0.42), rgba(3,3,6,0.82)), url('/threshold-bg.webp')",

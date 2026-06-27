@@ -92,7 +92,7 @@ export default function Modal({ open, onClose, children, ariaLabel }: ModalProps
     >
       <div
         ref={contentRef as RefObject<HTMLDivElement>}
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-amber-700/35 bg-gradient-to-b from-gray-950 via-gray-950 to-black p-6 shadow-2xl shadow-black/70 ring-1 ring-white/5 animate-[scaleIn_0.2s_ease-out_both]"
+        className="relative w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl border border-amber-700/35 bg-gradient-to-b from-gray-950 via-gray-950 to-black p-6 shadow-2xl shadow-black/70 ring-1 ring-white/5 animate-[scaleIn_0.2s_ease-out_both]"
       >
         <div className="pointer-events-none absolute inset-2 rounded-lg border border-gray-700/30" />
         <button

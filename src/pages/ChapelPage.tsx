@@ -104,7 +104,7 @@ export default function ChapelPage() {
 
   const now = new Date();
   const visibleOfferings = getVisibleOfferings(offerings, now);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   function showEmpty() {
     return (
@@ -236,9 +236,9 @@ export default function ChapelPage() {
   }
 
   return (
-    <div className="page-in relative min-h-screen bg-black">
+    <div className="page-in relative flex min-h-dvh flex-col bg-black">
       {/* Header */}
-      <header className="relative z-20 flex items-center justify-between px-4 py-3 border-b border-amber-900/25 bg-black/55 backdrop-blur-sm shadow-lg shadow-black/40">
+      <header className="relative z-20 flex shrink-0 items-center justify-between px-4 py-3 border-b border-amber-900/25 bg-black/55 backdrop-blur-sm shadow-lg shadow-black/40">
         <img src="/logo.svg" alt="nocturne" className="h-8 w-auto drop-shadow-[0_0_10px_rgba(255,255,255,0.12)]" />
         <div className="flex items-center gap-3">
           <Button variant="link" onClick={() => navigate("/")}>
@@ -262,9 +262,8 @@ export default function ChapelPage() {
 
       {/* Chapel area */}
       <main
-        className="relative w-full overflow-hidden bg-cover bg-center"
+        className="relative min-h-0 flex-1 overflow-hidden bg-cover bg-center"
         style={{
-          height: "calc(100vh - 53px)",
           backgroundImage:
             "linear-gradient(rgba(3,3,6,0.18), rgba(3,3,6,0.56)), url('/chapel-bg.webp')",
         }}
@@ -308,7 +307,7 @@ export default function ChapelPage() {
             )}
           </div>
         ) : (
-          <div className="relative z-10 flex max-h-full flex-col items-center gap-5 overflow-y-auto p-5 pt-8 pb-28">
+          <div className="relative z-10 flex h-full flex-col items-center gap-5 overflow-y-auto p-5 pt-12 pb-28">
             {visibleOfferings.length === 0 ? (
               showEmpty()
             ) : (
