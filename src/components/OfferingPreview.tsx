@@ -1,4 +1,6 @@
-import type { Offering } from "../domain/types";
+import type { Mood, Offering } from "../domain/types";
+import { moodLabels } from "../domain/moods";
+import { getOfferingImagePath } from "../assets/offeringImages";
 
 interface OfferingPreviewProps {
   offering: Offering;
@@ -9,20 +11,12 @@ interface OfferingPreviewProps {
   candleAnimating?: boolean;
 }
 
-const moodBorder: Record<string, string> = {
-  grief: "border-stone-600/40 hover:border-stone-500/60 hover:shadow-[0_0_12px_rgba(120,113,108,0.2)]",
-  rage: "border-red-600/40 hover:border-red-500/60 hover:shadow-[0_0_12px_rgba(220,38,38,0.2)]",
-  fear: "border-violet-600/40 hover:border-violet-500/60 hover:shadow-[0_0_12px_rgba(124,58,237,0.2)]",
-  shame: "border-amber-600/40 hover:border-amber-500/60 hover:shadow-[0_0_12px_rgba(217,119,6,0.2)]",
-  loneliness: "border-blue-600/40 hover:border-blue-500/60 hover:shadow-[0_0_12px_rgba(37,99,235,0.2)]",
-};
-
-const moodIcon: Record<string, string> = {
-  grief: "○",
-  rage: "◉",
-  fear: "◈",
-  shame: "◎",
-  loneliness: "◇",
+const moodAccent: Record<Mood, string> = {
+  grief: "hover:border-stone-500/40 hover:shadow-[0_0_18px_rgba(120,113,108,0.18)]",
+  rage: "hover:border-red-500/40 hover:shadow-[0_0_18px_rgba(220,38,38,0.16)]",
+  fear: "hover:border-violet-500/40 hover:shadow-[0_0_18px_rgba(124,58,237,0.16)]",
+  shame: "hover:border-amber-500/40 hover:shadow-[0_0_18px_rgba(217,119,6,0.16)]",
+  loneliness: "hover:border-blue-500/40 hover:shadow-[0_0_18px_rgba(37,99,235,0.16)]",
 };
 
 function hashId(id: string): number {
@@ -51,31 +45,44 @@ export default function OfferingPreview({
   isLit,
   candleAnimating,
 }: OfferingPreviewProps) {
+  const imagePath = getOfferingImagePath(offering.id);
+
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={offering.generatedName}
-      className={`fade-in float-animate group flex flex-col items-center justify-center gap-1 w-24 h-24 md:w-20 md:h-20 rounded-full border bg-gray-900/60 hover:bg-gray-800/70 hover:scale-105 transition-all duration-300 cursor-pointer text-center ${moodBorder[offering.mood]} ${isYours ? "ring-1 ring-gray-300/50" : ""} ${candleAnimating ? "shadow-[0_0_15px_rgba(251,191,36,0.5)]" : ""}`}
+      aria-label={`${offering.generatedName}, ${moodLabels[offering.mood]} offering`}
+      className={`fade-in float-animate group flex w-60 max-w-[78vw] items-center gap-3 rounded-2xl border border-gray-800/20 bg-black/20 p-2 pr-3 text-left backdrop-blur-[1px] transition-all duration-300 hover:bg-black/35 hover:scale-[1.02] cursor-pointer ${moodAccent[offering.mood]} ${isYours ? "ring-1 ring-gray-300/40" : ""} ${candleAnimating ? "shadow-[0_0_22px_rgba(251,191,36,0.35)]" : ""}`}
       style={getFloatStyle(offering.id)}
     >
-      <span className="text-lg leading-none text-gray-500 group-hover:text-gray-400 transition-colors">
-        {moodIcon[offering.mood]}
+      <span className="relative h-20 w-20 shrink-0 md:h-24 md:w-24" aria-hidden="true">
+        <span className="absolute inset-x-3 bottom-1 h-3 rounded-full bg-black/70 blur-md" />
+        <img
+          src={imagePath}
+          alt=""
+          className="relative z-10 h-full w-full object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.85)] transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
       </span>
-      <span className="font-serif text-[11px] text-gray-300 group-hover:text-white transition-colors line-clamp-1 px-1 leading-tight">
-        {offering.generatedName}
-      </span>
-      <span className="text-[10px] text-gray-600 leading-none line-clamp-1 px-1">
-        {offering.body}
-      </span>
-      {(offering.candleCount > 0 || offering.witnessCount > 0 || isWitnessed || isLit) && (
-        <span className="text-[9px] text-gray-500 leading-none -mt-0.5">
-          {offering.candleCount > 0 && `✦${offering.candleCount} `}
-          {offering.witnessCount > 0 && `·${offering.witnessCount} `}
-          {isLit && "✦"}
-          {isWitnessed && "·"}
+      <span className="flex min-w-0 flex-col gap-1">
+        <span className="font-serif text-base text-gray-200 transition-colors group-hover:text-white line-clamp-1 leading-tight">
+          {offering.generatedName}
         </span>
-      )}
+        <span className="text-xs text-gray-400/90 leading-snug line-clamp-2">
+          {offering.body}
+        </span>
+        {(offering.candleCount > 0 || offering.witnessCount > 0 || isWitnessed || isLit) && (
+          <span className="text-[10px] text-gray-500 leading-none pt-1">
+            {offering.witnessCount > 0 && `·${offering.witnessCount} witnessed `}
+            {offering.candleCount > 0 && `✦${offering.candleCount} `}
+            {isWitnessed && "·"}
+            {isLit && "✦"}
+          </span>
+        )}
+        {isYours && (
+          <span className="text-[10px] text-gray-500 italic">thine</span>
+        )}
+      </span>
     </button>
   );
 }

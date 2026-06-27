@@ -1,6 +1,7 @@
 import type { Offering, LocalOfferingState } from "../domain/types";
 import { moodLabels } from "../domain/moods";
 import { getTimeUntilFadeLabel } from "../domain/expiration";
+import { getOfferingImagePath } from "../assets/offeringImages";
 import Button from "./Button";
 
 interface OfferingDetailProps {
@@ -27,6 +28,7 @@ export default function OfferingDetail({
   const hasWitnessed = localState.witnessedOfferingIds.includes(offering.id);
   const hasLitCandle = localState.candleOfferingIds.includes(offering.id);
   const hasReported = localState.reportedOfferingIds.includes(offering.id);
+  const imagePath = getOfferingImagePath(offering.id);
   const fadeLabel = getTimeUntilFadeLabel(offering, new Date());
   const fadeColor =
     fadeLabel === "fading to ash" ? "text-red-500" :
@@ -36,6 +38,15 @@ export default function OfferingDetail({
 
   return (
     <div className="flex flex-col gap-5">
+      <div className="relative mx-auto flex h-44 w-full items-center justify-center overflow-hidden rounded-lg bg-black/25">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(156,163,175,0.08),transparent_58%)]" />
+        <img
+          src={imagePath}
+          alt=""
+          className="relative z-10 h-40 w-40 object-contain drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)]"
+        />
+      </div>
+
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500 uppercase tracking-wider">
           {moodLabels[offering.mood]}
@@ -50,7 +61,7 @@ export default function OfferingDetail({
         )}
       </div>
 
-      <h2 className="font-serif text-xl text-gray-200">
+      <h2 className="font-serif text-2xl text-gray-200">
         {offering.generatedName}
       </h2>
 

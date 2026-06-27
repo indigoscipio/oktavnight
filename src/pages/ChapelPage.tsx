@@ -224,10 +224,10 @@ export default function ChapelPage() {
   }
 
   return (
-    <div className="page-in relative min-h-screen">
+    <div className="page-in relative min-h-screen bg-black">
       {/* Header */}
-      <header className="relative z-10 flex items-center justify-between px-4 py-3 border-b border-gray-900">
-        <span className="font-serif text-base text-gray-500 tracking-widest">
+      <header className="relative z-20 flex items-center justify-between px-4 py-3 border-b border-gray-800/50 bg-black/70 backdrop-blur-sm">
+        <span className="font-serif text-xl text-gray-300 tracking-[0.28em]">
           Nocturne
         </span>
         <div className="flex items-center gap-3">
@@ -252,22 +252,28 @@ export default function ChapelPage() {
 
       {/* Chapel area */}
       <main
-        className="relative w-full"
-        style={{ height: "calc(100vh - 53px)" }}
+        className="relative w-full overflow-hidden bg-cover bg-center"
+        style={{
+          height: "calc(100vh - 53px)",
+          backgroundImage:
+            "linear-gradient(rgba(3,3,6,0.34), rgba(3,3,6,0.72)), url('/chapel-bg.webp')",
+        }}
       >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.18)_42%,rgba(0,0,0,0.78)_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/85 to-transparent" />
         {loading ? (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
             <div className="w-6 h-6 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : fetchError ? (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
               <p className="text-gray-500 text-sm text-center">The offerings elude us.</p>
               <Button variant="ghost" onClick={handleRetry}>Retry</Button>
             </div>
           </div>
         ) : isDesktop ? (
-          <div className="relative w-full h-full">
+          <div className="relative z-10 w-full h-full">
             {visibleOfferings.length === 0 ? (
               showEmpty()
             ) : (
@@ -275,7 +281,10 @@ export default function ChapelPage() {
                 <div
                   key={o.id}
                   className="absolute"
-                  style={{ left: `${o.position.x}%`, top: `${o.position.y}%` }}
+                  style={{
+                    left: `${Math.min(Math.max(o.position.x, 4), 78)}%`,
+                    top: `${Math.min(Math.max(o.position.y, 6), 78)}%`,
+                  }}
                 >
                   <OfferingPreview
                     offering={o}
@@ -290,7 +299,7 @@ export default function ChapelPage() {
             )}
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-4 p-6 pt-8 overflow-y-auto max-h-full">
+          <div className="relative z-10 flex max-h-full flex-col items-center gap-5 overflow-y-auto p-5 pt-8 pb-28">
             {visibleOfferings.length === 0 ? (
               showEmpty()
             ) : (
@@ -310,22 +319,26 @@ export default function ChapelPage() {
         )}
 
         {!loading && !fetchError && visibleOfferings.length > 0 && (
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 text-[10px] text-gray-600">
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 text-[10px] text-gray-500 bg-black/25 px-3 py-1 rounded-full backdrop-blur-sm">
             {visibleOfferings.length === 1
               ? "A single offering flickers in the dark."
               : `${visibleOfferings.length} offerings flicker in the dark.`}
           </div>
         )}
 
-        {/* Release button */}
-        <div className="fixed bottom-6 right-6 z-20">
-          <Button variant="primary" onClick={() => setShowReleaseModal(true)}>
-            Make an Offering
+        {/* Offering button */}
+        <div className="fixed bottom-6 left-1/2 z-20 -translate-x-1/2">
+          <Button
+            variant="ghost"
+            onClick={() => setShowReleaseModal(true)}
+            className="rounded-full border-gray-700/70 bg-black/45 px-6 py-3 tracking-widest text-gray-200 backdrop-blur-sm hover:bg-black/65"
+          >
+            + Make an Offering
           </Button>
         </div>
 
         {/* Legend */}
-        <div className="fixed bottom-6 left-6 z-20 text-[10px] text-gray-600 flex gap-3">
+        <div className="fixed bottom-6 left-6 z-20 hidden gap-3 text-[10px] text-gray-500 md:flex">
           <span>✦ candle lit</span>
           <span>· witness borne</span>
         </div>
@@ -357,7 +370,7 @@ export default function ChapelPage() {
         )}
       </Modal>
 
-      {/* Release offering modal */}
+      {/* Make offering modal */}
       <ReleaseOfferingModal
         open={showReleaseModal}
         onClose={() => setShowReleaseModal(false)}
