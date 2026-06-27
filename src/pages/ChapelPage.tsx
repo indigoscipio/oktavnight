@@ -16,6 +16,8 @@ import OfferingDetail from "../components/OfferingDetail";
 import ReleaseOfferingModal from "../components/ReleaseOfferingModal";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
+import { ritualIconPaths } from "../assets/iconPaths";
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(
@@ -45,6 +47,7 @@ export default function ChapelPage() {
   const [candleAnimatingIds, setCandleAnimatingIds] = useState<string[]>([]);
   const [, setTick] = useState(0);
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const candleTimers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
   useEffect(() => {
     if (searchParams.get("release") === "true") {
@@ -86,10 +89,12 @@ export default function ChapelPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Cleanup feedback timer on unmount
+  // Cleanup timers on unmount
   useEffect(() => {
     return () => {
       if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
+      candleTimers.current.forEach(clearTimeout);
+      candleTimers.current.clear();
     };
   }, []);
 
@@ -132,16 +137,17 @@ export default function ChapelPage() {
 
   async function handleCreateOffering(input: { body: string; mood: Mood }) {
     const newOffering = createOffering({ ...input, existingOfferings: offerings });
+    let savedOffering: Offering;
     try {
-      await postOffering(newOffering);
+      savedOffering = await postOffering(newOffering);
     } catch {
       showFeedback("Failed to create offering. Try again.");
       return;
     }
-    setOfferings((prev) => [...prev, newOffering]);
+    setOfferings((prev) => [...prev.filter((o) => o.id !== savedOffering.id), savedOffering]);
     setLocalState((prev) => ({
       ...prev,
-      createdOfferingIds: [...prev.createdOfferingIds, newOffering.id],
+      createdOfferingIds: [...prev.createdOfferingIds, savedOffering.id],
     }));
     setShowReleaseModal(false);
   }
@@ -177,9 +183,11 @@ export default function ChapelPage() {
         setOfferings((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
         setSelectedOffering(updated);
         setCandleAnimatingIds((prev) => [...prev, selectedOffering.id]);
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           setCandleAnimatingIds((prev) => prev.filter((id) => id !== selectedOffering.id));
+          candleTimers.current.delete(timer);
         }, 1000);
+        candleTimers.current.add(timer);
       } catch {
         showFeedback("Failed to save. Try again.");
         return;
@@ -226,8 +234,8 @@ export default function ChapelPage() {
   return (
     <div className="page-in relative min-h-screen bg-black">
       {/* Header */}
-      <header className="relative z-20 flex items-center justify-between px-4 py-3 border-b border-gray-800/50 bg-black/70 backdrop-blur-sm">
-        <span className="font-serif text-xl text-gray-300 tracking-[0.28em]">
+      <header className="relative z-20 flex items-center justify-between px-4 py-3 border-b border-amber-900/25 bg-black/55 backdrop-blur-sm shadow-lg shadow-black/40">
+        <span className="font-serif text-xl text-gray-100 tracking-[0.28em] drop-shadow-[0_0_10px_rgba(255,255,255,0.12)]">
           Nocturne
         </span>
         <div className="flex items-center gap-3">
@@ -256,11 +264,11 @@ export default function ChapelPage() {
         style={{
           height: "calc(100vh - 53px)",
           backgroundImage:
-            "linear-gradient(rgba(3,3,6,0.34), rgba(3,3,6,0.72)), url('/chapel-bg.webp')",
+            "linear-gradient(rgba(3,3,6,0.18), rgba(3,3,6,0.56)), url('/chapel-bg.webp')",
         }}
       >
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.18)_42%,rgba(0,0,0,0.78)_100%)]" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/85 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.08)_42%,rgba(0,0,0,0.66)_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
         {loading ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
             <div className="w-6 h-6 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
@@ -319,7 +327,7 @@ export default function ChapelPage() {
         )}
 
         {!loading && !fetchError && visibleOfferings.length > 0 && (
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 text-[10px] text-gray-500 bg-black/25 px-3 py-1 rounded-full backdrop-blur-sm">
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 rounded-full border border-amber-900/35 bg-black/45 px-4 py-1.5 text-xs text-gray-200 shadow-lg shadow-black/40 backdrop-blur-sm">
             {visibleOfferings.length === 1
               ? "A single offering flickers in the dark."
               : `${visibleOfferings.length} offerings flicker in the dark.`}
@@ -329,24 +337,34 @@ export default function ChapelPage() {
         {/* Offering button */}
         <div className="fixed bottom-6 left-1/2 z-20 -translate-x-1/2">
           <Button
-            variant="ghost"
+            variant="primary"
             onClick={() => setShowReleaseModal(true)}
-            className="rounded-full border-gray-700/70 bg-black/45 px-6 py-3 tracking-widest text-gray-200 backdrop-blur-sm hover:bg-black/65"
+            className="rounded-full px-6 py-3 tracking-widest"
           >
-            + Make an Offering
+            Make an Offering
           </Button>
         </div>
 
         {/* Legend */}
-        <div className="fixed bottom-6 left-6 z-20 hidden gap-3 text-[10px] text-gray-500 md:flex">
-          <span>✦ candle lit</span>
-          <span>· witness borne</span>
+        <div className="fixed bottom-6 left-6 z-20 hidden gap-3 rounded-full border border-gray-800/70 bg-black/40 px-4 py-2 text-[11px] text-gray-300 shadow-lg shadow-black/40 backdrop-blur-sm md:flex">
+          <span className="inline-flex items-center gap-1.5">
+            <Icon src={ritualIconPaths.lit} className="h-3.5 w-3.5 text-amber-200/85" />
+            Candle lit
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Icon src={ritualIconPaths.witnessed} className="h-3.5 w-3.5 text-gray-200/85" />
+            Witness borne
+          </span>
         </div>
       </main>
 
       {/* Feedback toast */}
       {feedback && (
-        <div className="toast fixed bottom-20 left-1/2 -translate-x-1/2 z-30 bg-gray-800 border border-gray-700 px-4 py-2 rounded text-xs text-gray-300">
+        <div
+          role="alert"
+          aria-live="polite"
+          className="toast fixed bottom-20 left-1/2 -translate-x-1/2 z-30 bg-gray-800 border border-gray-700 px-4 py-2 rounded text-xs text-gray-300"
+        >
           {feedback}
         </div>
       )}

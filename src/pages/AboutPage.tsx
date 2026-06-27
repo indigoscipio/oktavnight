@@ -1,47 +1,72 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import Icon from "../components/Icon";
+import { ritualIconPaths } from "../assets/iconPaths";
 
 export default function AboutPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="page-in flex flex-col items-center justify-center min-h-screen px-4">
-      <div className="max-w-md flex flex-col gap-5">
-        <h1 className="font-serif text-2xl text-gray-200">On Nocturne</h1>
+    <div
+      className="page-in relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-cover bg-center px-4 py-10"
+      style={{
+        backgroundImage:
+          "linear-gradient(rgba(3,3,6,0.42), rgba(3,3,6,0.82)), url('/threshold-bg.webp')",
+      }}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.18)_46%,rgba(0,0,0,0.82)_100%)]" />
+      <main className="relative z-10 max-w-2xl rounded-[2rem] border border-amber-900/30 bg-gradient-to-b from-black/45 via-gray-950/45 to-black/55 p-7 shadow-2xl shadow-black/70 backdrop-blur-[2px] sm:p-9">
+        <p className="mb-2 text-center text-[10px] uppercase tracking-[0.3em] text-amber-200/70">About Nocturne</p>
+        <h1 className="font-serif text-4xl text-gray-100 text-center">On Nocturne</h1>
+        <hr className="ornate my-5" />
 
-        <section className="flex flex-col gap-3 text-sm text-gray-400 leading-relaxed">
-          <p>
-            Nocturne is a still and quiet place for grievous thoughts — not a forum, nor a ledger of names.
-          </p>
+        <section className="grid gap-4 text-sm text-gray-300 leading-relaxed">
+          <div className="rounded-xl border border-gray-800/70 bg-black/25 p-4">
+            <div className="mb-2 flex items-center gap-2 text-gray-100">
+              <Icon src={ritualIconPaths.witnessed} className="h-5 w-5 text-gray-100/85" />
+              <h2 className="font-serif text-xl">A Quiet Place</h2>
+            </div>
+            <p>
+              Nocturne is a still and quiet place for grievous thoughts — not a forum, nor a ledger of names.
+            </p>
+          </div>
 
-          <p>
-            Offerings are brief, nameless, and fleeting. Each fades by nightfall.
-            None know who left them, nor why.
-          </p>
+          <div className="rounded-xl border border-gray-800/70 bg-black/25 p-4">
+            <div className="mb-2 flex items-center gap-2 text-gray-100">
+              <Icon src={ritualIconPaths.lit} className="h-5 w-5 text-amber-200/85" />
+              <h2 className="font-serif text-xl">Brief And Nameless</h2>
+            </div>
+            <p>
+              Offerings are brief, nameless, and fleeting. Each fades by nightfall.
+              None know who left them, nor why.
+            </p>
+          </div>
 
-          <p>
-            Thou may release a burden, bear witness to another's, light a candle in the dark, or let it pass from thy sight. That is all.
-          </p>
+          <div className="rounded-xl border border-gray-800/70 bg-black/25 p-4">
+            <p>
+              Thou may release a burden, bear witness to another's, light a candle in the dark, or let it pass from thy sight. That is all.
+            </p>
+          </div>
 
           <hr className="ornate my-3" />
 
-          <p className="text-gray-500 text-xs">
+          <p className="text-gray-400 text-xs leading-relaxed">
             Nocturne is no cure. It is a small, nameless place for those who carry what cannot be set down elsewhere.
           </p>
 
-          <p className="text-gray-500 text-xs">
+          <p className="text-gray-400 text-xs leading-relaxed">
             If thou or another art in peril, seek those nearby, or the aid of those sworn to protect.
           </p>
 
           <hr className="ornate my-3" />
 
-          <p className="text-gray-500 text-xs">
+          <p className="text-gray-400 text-xs leading-relaxed">
             Plead not names, nor addresses, nor any mark by which thou might be known.
             Offerings are open for all to see, but none shall know the hand that left them.
           </p>
         </section>
 
-        <div className="flex gap-3 mt-2">
+        <div className="flex flex-col gap-3 mt-6 sm:flex-row">
           <Button variant="primary" onClick={() => navigate("/chapel")}>
             Return to Chapel
           </Button>
@@ -49,7 +74,7 @@ export default function AboutPage() {
             Threshold
           </Button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

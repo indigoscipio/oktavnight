@@ -2,8 +2,10 @@ import { useState } from "react";
 import type { Mood } from "../domain/types";
 import { moodLabels } from "../domain/moods";
 import { validateOfferingBody } from "../domain/validation";
+import { moodIconPaths } from "../assets/iconPaths";
 import Modal from "./Modal";
 import Button from "./Button";
+import Icon from "./Icon";
 
 interface ReleaseOfferingModalProps {
   open: boolean;
@@ -43,52 +45,61 @@ export default function ReleaseOfferingModal({
     onClose();
   }
 
-  const remaining = 280 - body.length;
-
   return (
     <Modal open={open} onClose={handleClose}>
-      <div className="flex flex-col gap-4">
-        <h2 className="font-serif text-lg text-gray-200">Release Thy Burden</h2>
+      <div className="relative flex flex-col gap-5 text-gray-200">
+        <div>
+          <p className="mb-1 text-[10px] uppercase tracking-[0.28em] text-amber-200/70">An Offering</p>
+          <h2 className="font-serif text-3xl text-gray-100">Release Thy Burden</h2>
+        </div>
 
-        <p className="text-xs text-gray-500 leading-relaxed">
+        <p className="text-sm text-gray-300 leading-relaxed">
           Let no name nor mark by which thou might be known pass into these words.
           Offerings are shown to all who enter — but none shall know thee.
         </p>
 
-        <p className="text-[10px] text-gray-600 leading-relaxed">
+        <p className="rounded-lg border border-amber-900/25 bg-amber-950/10 p-3 text-xs text-gray-400 leading-relaxed">
           Nocturne is no refuge from harm. If thou or another art in peril, seek the aid of those nearby.
         </p>
 
+        <hr className="ornate" />
+
         <div>
           <textarea
+            data-autofocus="true"
             value={body}
             onChange={(e) => setBody(e.target.value)}
             placeholder="What wouldst thou release?"
             rows={4}
             maxLength={280}
-            className="w-full bg-gray-950 border border-gray-800 rounded p-3 text-sm text-gray-200 placeholder-gray-600 resize-none focus:outline-none focus:border-gray-600"
+            aria-invalid={errors.length > 0}
+            aria-describedby={errors.length > 0 ? "offering-errors" : undefined}
+            className="w-full resize-none rounded-lg border border-gray-700/80 bg-black/40 p-4 text-sm leading-relaxed text-gray-100 placeholder:text-gray-500 shadow-inner shadow-black/60 focus:outline-none focus:border-amber-300/60 focus:ring-2 focus:ring-amber-200/20"
           />
-          <div className="text-right text-xs text-gray-600 mt-1">
-            {remaining}
+          <div className="mt-1 text-right text-xs text-gray-400">
+            {body.length} / 280
           </div>
         </div>
 
         <div>
-          <label className="block text-xs text-gray-500 mb-2 uppercase tracking-wider">
+          <label className="block text-xs text-gray-300 mb-2 uppercase tracking-[0.24em]">
             Mood
           </label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Mood">
             {moods.map((m) => (
               <button
                 key={m}
                 type="button"
+                role="radio"
+                aria-checked={mood === m}
                 onClick={() => setMood(m)}
-                className={`px-3 py-1 rounded text-xs cursor-pointer border transition-colors ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs cursor-pointer border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 ${
                   mood === m
-                    ? "border-gray-400 bg-gray-800 text-gray-200"
-                    : "border-gray-800 text-gray-500 hover:border-gray-600"
+                    ? "border-amber-300/70 bg-amber-950/25 text-amber-100 shadow-[0_0_14px_rgba(251,191,36,0.12)]"
+                    : "border-gray-700/80 bg-black/20 text-gray-300 hover:border-gray-500 hover:text-gray-100"
                 }`}
               >
+                <Icon src={moodIconPaths[m]} className="h-3.5 w-3.5" />
                 {moodLabels[m]}
               </button>
             ))}
@@ -96,14 +107,14 @@ export default function ReleaseOfferingModal({
         </div>
 
         {errors.length > 0 && (
-          <div className="text-xs text-red-400">
+          <div id="offering-errors" className="rounded border border-red-800/70 bg-red-950/25 p-2 text-xs text-red-300">
             {errors.map((e, i) => (
               <p key={i}>{e}</p>
             ))}
           </div>
         )}
 
-        <div className="flex gap-2 justify-end">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="ghost" onClick={handleClose}>
             Stay thy hand
           </Button>

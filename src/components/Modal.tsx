@@ -34,6 +34,11 @@ export default function Modal({ open, onClose, children }: ModalProps) {
   // Autofocus first focusable element
   useEffect(() => {
     if (!open || !contentRef.current) return;
+    const requestedFocus = contentRef.current.querySelector<HTMLElement>("[data-autofocus='true']");
+    if (requestedFocus) {
+      requestedFocus.focus();
+      return;
+    }
     const focusable = getFocusable(contentRef.current);
     focusable[0]?.focus();
   }, [open]);
@@ -81,18 +86,18 @@ export default function Modal({ open, onClose, children }: ModalProps) {
       role="dialog"
       aria-modal="true"
       onClick={handleOverlayClick}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 animate-[fadeIn_0.2s_ease-out_both]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out_both]"
     >
       <div
         ref={contentRef as RefObject<HTMLDivElement>}
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-gray-900 border border-gray-800 rounded-lg p-6 shadow-xl ring-1 ring-gray-700/30 animate-[scaleIn_0.2s_ease-out_both]"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-amber-700/35 bg-gradient-to-b from-gray-950 via-gray-950 to-black p-6 shadow-2xl shadow-black/70 ring-1 ring-white/5 animate-[scaleIn_0.2s_ease-out_both]"
       >
+        <div className="pointer-events-none absolute inset-2 rounded-lg border border-gray-700/30" />
         <button
           type="button"
           aria-label="Close"
           onClick={onClose}
-          tabIndex={-1}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-300 text-xl leading-none cursor-pointer p-1"
+          className="absolute top-3 right-3 z-10 rounded text-gray-400 hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 text-xl leading-none cursor-pointer p-1"
         >
           &times;
         </button>

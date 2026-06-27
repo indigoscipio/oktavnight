@@ -10,6 +10,7 @@ const corsHeaders = {
 
 const VALID_MOODS = ["grief", "rage", "fear", "shame", "loneliness"] as const;
 const VALID_STATUSES = ["active", "hidden", "expired"] as const;
+const MAX_BODY_LENGTH = 280;
 
 function json(data: unknown, status = 200): Response {
   return Response.json(data, { status, headers: corsHeaders });
@@ -40,12 +41,9 @@ function rowToOffering(row: any) {
 function validateOffering(o: any): string | null {
   if (!o || typeof o !== "object") return "Invalid JSON body";
   if (typeof o.id !== "string" || !o.id) return "id required";
-  if (typeof o.body !== "string" || o.body.length < 1 || o.body.length > 500) return "body must be 1-500 characters";
+  if (typeof o.body !== "string" || o.body.length < 1 || o.body.length > MAX_BODY_LENGTH) return "body must be 1-280 characters";
   if (!VALID_MOODS.includes(o.mood)) return "invalid mood";
   if (typeof o.generatedName !== "string" || !o.generatedName || o.generatedName.length > 100) return "generatedName required";
-  if (!VALID_STATUSES.includes(o.status)) return "invalid status";
-  if (typeof o.createdAt !== "string" || !o.createdAt) return "createdAt required";
-  if (typeof o.expiresAt !== "string" || !o.expiresAt) return "expiresAt required";
   if (!o.position || typeof o.position.x !== "number" || typeof o.position.y !== "number") return "invalid position";
   return null;
 }
@@ -93,15 +91,19 @@ export default {
       const validationError = validateOffering(o);
       if (validationError) return json({ error: validationError }, 400);
 
+      const createdAt = new Date();
+      const expiresAt = new Date(createdAt.getTime() + 24 * 60 * 60 * 1000);
+
       await env.DB.prepare(
         "INSERT INTO offerings (id, body, mood, generated_name, status, witness_count, candle_count, report_count, created_at, expires_at, position_x, position_y) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
       ).bind(
         o.id, o.body, o.mood, o.generatedName,
-        o.status, o.witnessCount, o.candleCount,
-        o.reportCount, o.createdAt,
-        o.expiresAt, o.position.x, o.position.y,
+        "active", 0, 0,
+        0, createdAt.toISOString(),
+        expiresAt.toISOString(), o.position.x, o.position.y,
       ).run();
-      return json(o, 201);
+      const { results } = await env.DB.prepare("SELECT * FROM offerings WHERE id = ?").bind(o.id).all();
+      return json(rowToOffering(results[0]), 201);
     }
 
     const actionMatch = pathname.match(/^\/api\/offerings\/([^/]+)\/(witness|candle|report)$/);
