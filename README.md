@@ -1,8 +1,8 @@
-# Nocturne
+# nocturne
 
 A quiet gothic ritual space for difficult thoughts.
 
-Nocturne is a small, anonymous, temporary space for people who need to set something down. No profiles. No replies. No names.
+nocturne is a small, anonymous, temporary space for people who need to set something down. No profiles. No replies. No names.
 
 ## What v0 supports
 

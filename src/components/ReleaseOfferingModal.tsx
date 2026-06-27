@@ -59,7 +59,7 @@ export default function ReleaseOfferingModal({
         </p>
 
         <p className="rounded-lg border border-amber-900/25 bg-amber-950/10 p-3 text-xs text-gray-400 leading-relaxed">
-          Nocturne is no refuge from harm. If thou or another art in peril, seek the aid of those nearby.
+          nocturne is no refuge from harm. If thou or another art in peril, seek the aid of those nearby.
         </p>
 
         <hr className="ornate" />

@@ -36,6 +36,10 @@ export default function ChapelPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  useEffect(() => {
+    document.title = "the chapel | nocturne";
+  }, []);
+
   const [offerings, setOfferings] = useState<Offering[]>([]);
   const [localState, setLocalState] = useState<LocalOfferingState>(() => loadViewerState());
   const [selectedOffering, setSelectedOffering] = useState<Offering | null>(null);
@@ -235,9 +239,7 @@ export default function ChapelPage() {
     <div className="page-in relative min-h-screen bg-black">
       {/* Header */}
       <header className="relative z-20 flex items-center justify-between px-4 py-3 border-b border-amber-900/25 bg-black/55 backdrop-blur-sm shadow-lg shadow-black/40">
-        <span className="font-serif text-xl text-gray-100 tracking-[0.28em] drop-shadow-[0_0_10px_rgba(255,255,255,0.12)]">
-          Nocturne
-        </span>
+        <img src="/logo.svg" alt="nocturne" className="h-8 w-auto drop-shadow-[0_0_10px_rgba(255,255,255,0.12)]" />
         <div className="flex items-center gap-3">
           <Button variant="link" onClick={() => navigate("/")}>
             Threshold
