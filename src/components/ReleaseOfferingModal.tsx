@@ -46,7 +46,7 @@ export default function ReleaseOfferingModal({
   }
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={open} onClose={handleClose} ariaLabel="Release thy burden">
       <div className="relative flex flex-col gap-5 text-gray-200">
         <div>
           <p className="mb-1 text-[10px] uppercase tracking-[0.28em] text-amber-200/70">An Offering</p>
@@ -65,7 +65,11 @@ export default function ReleaseOfferingModal({
         <hr className="ornate" />
 
         <div>
+          <label className="sr-only" htmlFor="offering-body">
+            Offering text
+          </label>
           <textarea
+            id="offering-body"
             data-autofocus="true"
             value={body}
             onChange={(e) => setBody(e.target.value)}
@@ -107,7 +111,7 @@ export default function ReleaseOfferingModal({
         </div>
 
         {errors.length > 0 && (
-          <div id="offering-errors" className="rounded border border-red-800/70 bg-red-950/25 p-2 text-xs text-red-300">
+          <div id="offering-errors" role="alert" className="rounded-lg border border-red-800/70 bg-red-950/25 p-2 text-xs text-red-300">
             {errors.map((e, i) => (
               <p key={i}>{e}</p>
             ))}

@@ -270,8 +270,9 @@ export default function ChapelPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.08)_42%,rgba(0,0,0,0.66)_100%)]" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
         {loading ? (
-          <div className="absolute inset-0 z-10 flex items-center justify-center">
+          <div className="absolute inset-0 z-10 flex items-center justify-center" role="status" aria-live="polite">
             <div className="w-6 h-6 border-2 border-gray-600 border-t-transparent rounded-full animate-spin" />
+            <span className="sr-only">Loading offerings</span>
           </div>
         ) : fetchError ? (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
@@ -298,8 +299,6 @@ export default function ChapelPage() {
                     offering={o}
                     onClick={() => setSelectedOffering(o)}
                     isYours={localState.createdOfferingIds.includes(o.id)}
-                    isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
-                    isLit={localState.candleOfferingIds.includes(o.id)}
                     candleAnimating={candleAnimatingIds.includes(o.id)}
                   />
                 </div>
@@ -317,8 +316,6 @@ export default function ChapelPage() {
                   offering={o}
                   onClick={() => setSelectedOffering(o)}
                   isYours={localState.createdOfferingIds.includes(o.id)}
-                  isWitnessed={localState.witnessedOfferingIds.includes(o.id)}
-                  isLit={localState.candleOfferingIds.includes(o.id)}
                   candleAnimating={candleAnimatingIds.includes(o.id)}
                 />
               ))
@@ -361,7 +358,7 @@ export default function ChapelPage() {
       {/* Feedback toast */}
       {feedback && (
         <div
-          role="alert"
+          role="status"
           aria-live="polite"
           className="toast fixed bottom-20 left-1/2 -translate-x-1/2 z-30 bg-gray-800 border border-gray-700 px-4 py-2 rounded text-xs text-gray-300"
         >
@@ -373,6 +370,7 @@ export default function ChapelPage() {
       <Modal
         open={!!selectedOffering}
         onClose={() => setSelectedOffering(null)}
+        ariaLabel={selectedOffering ? `${selectedOffering.generatedName} offering detail` : "Offering detail"}
       >
         {selectedOffering && (
           <OfferingDetail

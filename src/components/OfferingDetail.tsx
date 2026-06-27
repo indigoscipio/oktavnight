@@ -33,10 +33,10 @@ export default function OfferingDetail({
   const imagePath = getOfferingImagePath(offering.id);
   const fadeLabel = getTimeUntilFadeLabel(offering, new Date());
   const fadeColor =
-    fadeLabel === "fading to ash" ? "text-red-500" :
-    fadeLabel === "fading soon" ? "text-amber-500" :
-    fadeLabel && (fadeLabel.startsWith("fading by") || fadeLabel.startsWith("fading in")) ? "text-amber-600/70" :
-    "text-gray-600";
+    fadeLabel === "fading to ash" ? "text-red-300" :
+    fadeLabel === "fading soon" ? "text-amber-300" :
+    fadeLabel && (fadeLabel.startsWith("fading by") || fadeLabel.startsWith("fading in")) ? "text-amber-300/85" :
+    "text-gray-400";
 
   return (
     <div className="flex flex-col gap-5 text-gray-200">
@@ -98,7 +98,6 @@ export default function OfferingDetail({
           onClick={onWitness}
           disabled={hasWitnessed || ritualLoading === "witness"}
         >
-          <Icon src={ritualIconPaths.witnessed} className="h-4 w-4" />
           {ritualLoading === "witness" ? "Witnessing..." : hasWitnessed ? "Witnessed" : "Witness"}
         </Button>
 
@@ -107,7 +106,6 @@ export default function OfferingDetail({
           onClick={onLightCandle}
           disabled={hasLitCandle || ritualLoading === "candle"}
         >
-          <Icon src={ritualIconPaths.lit} className="h-4 w-4" />
           {ritualLoading === "candle" ? "Lighting..." : hasLitCandle ? "Candle Lit" : "Light Candle"}
         </Button>
 

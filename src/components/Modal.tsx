@@ -5,6 +5,7 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   children: ReactNode;
+  ariaLabel: string;
 }
 
 function getFocusable(container: HTMLElement): HTMLElement[] {
@@ -15,7 +16,7 @@ function getFocusable(container: HTMLElement): HTMLElement[] {
   );
 }
 
-export default function Modal({ open, onClose, children }: ModalProps) {
+export default function Modal({ open, onClose, children, ariaLabel }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
@@ -85,6 +86,7 @@ export default function Modal({ open, onClose, children }: ModalProps) {
       ref={overlayRef}
       role="dialog"
       aria-modal="true"
+      aria-label={ariaLabel}
       onClick={handleOverlayClick}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm animate-[fadeIn_0.2s_ease-out_both]"
     >
@@ -97,7 +99,7 @@ export default function Modal({ open, onClose, children }: ModalProps) {
           type="button"
           aria-label="Close"
           onClick={onClose}
-          className="absolute top-3 right-3 z-10 rounded text-gray-400 hover:text-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 text-xl leading-none cursor-pointer p-1"
+          className="absolute top-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 hover:bg-white/5 hover:text-amber-100 active:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 text-xl leading-none cursor-pointer"
         >
           &times;
         </button>

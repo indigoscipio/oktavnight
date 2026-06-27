@@ -8,8 +8,6 @@ interface OfferingPreviewProps {
   offering: Offering;
   onClick: () => void;
   isYours: boolean;
-  isWitnessed: boolean;
-  isLit: boolean;
   candleAnimating?: boolean;
 }
 
@@ -43,8 +41,6 @@ export default function OfferingPreview({
   offering,
   onClick,
   isYours,
-  isWitnessed,
-  isLit,
   candleAnimating,
 }: OfferingPreviewProps) {
   const imagePath = getOfferingImagePath(offering.id);
@@ -54,7 +50,7 @@ export default function OfferingPreview({
       type="button"
       onClick={onClick}
       aria-label={`${offering.generatedName}, ${moodLabels[offering.mood]} offering, ${offering.witnessCount} witnessed, ${offering.candleCount} candles lit`}
-      className={`fade-in float-animate group relative flex w-72 max-w-[86vw] items-center gap-3 overflow-hidden rounded-2xl border border-amber-900/25 bg-gradient-to-br from-gray-950/85 via-black/62 to-black/42 p-2.5 pr-3.5 text-left shadow-xl shadow-black/45 backdrop-blur-[2px] transition-all duration-300 hover:bg-black/65 hover:scale-[1.02] cursor-pointer ${moodAccent[offering.mood]} ${isYours ? "ring-1 ring-amber-200/35" : ""} ${candleAnimating ? "shadow-[0_0_24px_rgba(251,191,36,0.32)]" : ""}`}
+      className={`fade-in float-animate group relative flex w-72 max-w-[86vw] items-center gap-3 overflow-hidden rounded-2xl border border-amber-900/25 bg-gradient-to-br from-gray-950/85 via-black/62 to-black/42 p-2.5 pr-3.5 text-left shadow-xl shadow-black/45 backdrop-blur-[2px] transition-all duration-300 hover:bg-black/65 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 cursor-pointer ${moodAccent[offering.mood]} ${isYours ? "ring-1 ring-amber-200/35" : ""} ${candleAnimating ? "shadow-[0_0_24px_rgba(251,191,36,0.32)]" : ""}`}
       style={getFloatStyle(offering.id)}
     >
       <span className="pointer-events-none absolute inset-1 rounded-xl border border-white/[0.04]" />
@@ -94,9 +90,6 @@ export default function OfferingPreview({
             <Icon src={ritualIconPaths.lit} className="h-3.5 w-3.5 text-amber-200/80" />
             {offering.candleCount} lit
           </span>
-          {(isWitnessed || isLit) && (
-            <span className="text-gray-400">kept</span>
-          )}
         </span>
       </span>
     </button>
